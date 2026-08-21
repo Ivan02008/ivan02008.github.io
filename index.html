@@ -717,73 +717,6 @@
         .mode-card .label { font-weight: 700; color: #333; font-size: 14px; margin-top: 4px; }
         .mode-card .desc { font-size: 11px; color: #888; }
 
-        .auth-container { padding: 30px 0; }
-        .auth-container .auth-title {
-            text-align: center;
-            font-size: 24px;
-            font-weight: 800;
-            color: #1a237e;
-            margin-bottom: 4px;
-        }
-        .auth-container .auth-subtitle {
-            text-align: center;
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-        .auth-container .auth-logo { text-align: center; font-size: 56px; margin-bottom: 12px; }
-        .auth-container .form-group { margin-bottom: 14px; }
-        .auth-container .form-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 4px;
-        }
-        .auth-container .form-group input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 14px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: #f5f7fa;
-        }
-        .auth-container .form-group input:focus {
-            outline: none;
-            border-color: #3949ab;
-            box-shadow: 0 4px 20px rgba(57, 73, 171, 0.1);
-        }
-        .auth-container .form-group input.error {
-            border-color: #c62828;
-            background: #ffebee;
-        }
-        .auth-container .form-group .error-text {
-            color: #c62828;
-            font-size: 12px;
-            margin-top: 4px;
-            display: block;
-        }
-        .auth-container .auth-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 8px;
-        }
-        .auth-container .auth-switch {
-            text-align: center;
-            margin-top: 14px;
-            color: #888;
-            font-size: 14px;
-        }
-        .auth-container .auth-switch a {
-            color: #3949ab;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .auth-container .auth-switch a:hover { text-decoration: underline; }
-
         .tag {
             display: inline-block;
             padding: 2px 12px;
@@ -848,7 +781,7 @@
 
     <script>
         // ============================================================
-        // ВСЕ ВОПРОСЫ (сокращённо для примера)
+        // ВСЕ ВОПРОСЫ (30 вопросов для примера — вы можете добавить свои)
         // ============================================================
         const ALL_QUESTIONS = [
             // Основы социологии
@@ -911,6 +844,9 @@
             streak: 0,
             maxStreak: 0,
             marathonScore: 0,
+            // ДЛЯ МАРАФОНА — правильные ответы считаем отдельно!
+            marathonCorrect: 0,
+            marathonAnswered: 0,
             isFinished: false,
             history: [],
             reviewMode: false,
@@ -919,10 +855,7 @@
             questionStatus: [],
             userAnswers: {},
             username: 'Гость',
-            profile: null,
-            // Для марафона — сколько всего правильных ответов
-            marathonCorrectCount: 0,
-            marathonTotalAnswered: 0
+            profile: null
         };
 
         const letters = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ж', 'З', 'И', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф'];
@@ -1252,8 +1185,8 @@
             state.streak = 0;
             state.maxStreak = 0;
             state.marathonScore = 0;
-            state.marathonCorrectCount = 0;
-            state.marathonTotalAnswered = 0;
+            state.marathonCorrect = 0;      // ← ОБНУЛЯЕМ
+            state.marathonAnswered = 0;      // ← ОБНУЛЯЕМ
             state.isFinished = false;
             state.answered = false;
             state.history = [];
@@ -1302,9 +1235,9 @@
             `;
 
             if (isMarathon) {
-                // В марафоне показываем количество правильных ответов
+                // В марафоне показываем правильные ответы
                 const answered = state.currentIndex;
-                const correct = state.marathonCorrectCount;
+                const correct = state.marathonCorrect;
                 html += `
                     <div class="marathon-status">
                         <div>
@@ -1493,7 +1426,6 @@
                     if (correctAnswers.includes(i)) el.classList.add('correct');
                     if (state.selectedAnswers.includes(i) && !correctAnswers.includes(i)) el.classList.add('wrong');
                 });
-                // Сравниваем массивы
                 const sortedSelected = state.selectedAnswers.slice().sort();
                 const sortedCorrect = correctAnswers.slice().sort();
                 correct = sortedSelected.join(',') === sortedCorrect.join(',');
@@ -1528,9 +1460,10 @@
             state.answered = true;
             
             if (state.mode === 'marathon') {
-                // В марафоне считаем правильные ответы отдельно
+                // В МАРАФОНЕ считаем правильные ответы отдельно!
+                state.marathonAnswered++;
                 if (correct) {
-                    state.marathonCorrectCount++;
+                    state.marathonCorrect++;
                     state.marathonScore += 10 + state.streak * 2;
                     state.streak++;
                     if (state.streak > state.maxStreak) state.maxStreak = state.streak;
@@ -1540,11 +1473,13 @@
                 // Обновляем статус марафона
                 const statusDiv = document.querySelector('.marathon-status');
                 if (statusDiv) {
-                    const answered = state.currentIndex + 1;
+                    const answered = state.marathonAnswered;
+                    const correctCount = state.marathonCorrect;
                     statusDiv.querySelector('.score-display').innerHTML = `<span class="star">⭐</span> ${state.marathonScore}`;
-                    const correctSpan = statusDiv.querySelector('.streak-display');
-                    if (correctSpan && correctSpan.textContent.includes('правильных')) {
-                        correctSpan.innerHTML = `✅ ${state.marathonCorrectCount}/${answered}`;
+                    // Обновляем правильные ответы
+                    const correctSpan = statusDiv.querySelectorAll('.streak-display')[0];
+                    if (correctSpan) {
+                        correctSpan.innerHTML = `✅ ${correctCount}/${answered}`;
                     }
                     const streakSpan = statusDiv.querySelectorAll('.streak-display')[1];
                     if (streakSpan) {
@@ -1607,15 +1542,15 @@
                 if (!confirm('Вы ещё не набрали очков. Уверены, что хотите выйти?')) return;
             }
             const name = state.username;
-            const totalAnswered = state.currentIndex;
+            const totalAnswered = state.marathonAnswered || 1;
             const gameResult = { 
-                correct: state.marathonCorrectCount, 
-                total: totalAnswered || 1, 
+                correct: state.marathonCorrect, 
+                total: totalAnswered, 
                 marathonScore: state.marathonScore 
             };
             state.profile = updateProfile(name, gameResult);
             updateLeaderboard(name);
-            alert(`🏆 ${name}, вы набрали ${state.marathonScore} очков!\n✅ Правильных ответов: ${state.marathonCorrectCount} из ${totalAnswered || 1}\n🔥 Максимальная серия: ${state.maxStreak}`);
+            alert(`🏆 ${name}, вы набрали ${state.marathonScore} очков!\n✅ Правильных ответов: ${state.marathonCorrect} из ${totalAnswered}\n🔥 Максимальная серия: ${state.maxStreak}`);
             state.isFinished = true;
             renderHome();
         }
@@ -1623,8 +1558,8 @@
         function renderResult() {
             const app = document.getElementById('app');
             const total = state.questions.length;
-            // Для марафона используем marathonCorrectCount
-            let score = state.mode === 'marathon' ? state.marathonCorrectCount : state.score;
+            // Для марафона используем marathonCorrect
+            let score = state.mode === 'marathon' ? state.marathonCorrect : state.score;
             const percent = Math.round((score / total) * 100);
             let stars = '', message = '';
             if (percent >= 90) { stars = '🌟🌟🌟'; message = 'Отлично! Вы настоящий эксперт! 🎉'; showConfetti(); }
