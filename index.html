@@ -1,1703 +1,1343 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Тесты для логопеда</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #f0f4ff;
-            min-height: 100vh;
-            padding: 16px;
-        }
-        #app { max-width: 820px; margin: 0 auto; }
-
-        @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pop {
-            0% { transform: scale(0.96); opacity: 0; }
-            70% { transform: scale(1.01); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .fade-in { animation: fadeSlideUp 0.4s ease forwards; }
-        .pop-in { animation: pop 0.3s ease forwards; }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0 16px 0;
-            border-bottom: 1px solid rgba(57, 73, 171, 0.06);
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .topbar .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 20px;
-            font-weight: 800;
-            color: #1a237e;
-        }
-        .topbar .logo .icon { font-size: 26px; }
-        .topbar .logo .badge {
-            background: #e8eaf6;
-            color: #3949ab;
-            font-size: 9px;
-            font-weight: 700;
-            padding: 2px 10px;
-            border-radius: 20px;
-        }
-        .topbar .right {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .topbar .right .user {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #1a237e;
-        }
-        .topbar .right .user .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 700;
-            color: white;
-        }
-        .btn-icon {
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            padding: 6px 8px;
-            border-radius: 8px;
-            transition: all 0.2s;
-        }
-        .btn-icon:hover { background: rgba(57, 73, 171, 0.06); }
-        .btn-icon:active { transform: scale(0.92); }
-
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 24px 28px;
-            box-shadow: 0 4px 20px rgba(26, 35, 126, 0.04), 0 1px 4px rgba(0,0,0,0.02);
-            border: 1px solid rgba(57, 73, 171, 0.04);
-            transition: all 0.2s;
-        }
-        .card:hover { box-shadow: 0 8px 36px rgba(26, 35, 126, 0.06); }
-
-        .profile-card {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 16px 20px;
-            background: linear-gradient(135deg, #f5f7ff, #eef1fa);
-            border-radius: 14px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(57, 73, 171, 0.06);
-        }
-        .profile-card .avatar-big {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            font-weight: 700;
-            color: white;
-            flex-shrink: 0;
-        }
-        .profile-card .info { flex: 1; }
-        .profile-card .info .name {
-            font-size: 16px;
-            font-weight: 700;
-            color: #1a237e;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .profile-card .info .stats {
-            display: flex;
-            gap: 14px;
-            font-size: 12px;
-            color: #666;
-            margin-top: 3px;
-            flex-wrap: wrap;
-        }
-        .profile-card .info .stats span {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-        }
-        .profile-card .info .stats .num { font-weight: 700; color: #1a237e; }
-
-        .question-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .question-header .num { font-size: 13px; font-weight: 600; color: #888; }
-        .question-header .type-tag {
-            font-size: 10px;
-            font-weight: 700;
-            color: #3949ab;
-            background: #e8eaf6;
-            padding: 2px 12px;
-            border-radius: 20px;
-            text-transform: uppercase;
-        }
-        .question-text {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1a237e;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            padding: 12px 16px;
-            background: #f8faff;
-            border-radius: 12px;
-            border-left: 4px solid #3949ab;
-        }
-
-        .options-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        .option {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 14px 18px;
-            background: #f8faff;
-            border: 2px solid transparent;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            font-size: 15px;
-            color: #333;
-            position: relative;
-        }
-        .option:hover:not(.disabled) { background: #eef1fa; transform: translateX(4px); }
-        .option:active:not(.disabled) { transform: scale(0.98); }
-        .option .letter {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #e8eaf6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 13px;
-            color: #3949ab;
-            flex-shrink: 0;
-            transition: all 0.25s ease;
-        }
-        .option .text { flex: 1; }
-        .option .shortcut {
-            font-size: 11px;
-            color: #bbb;
-            background: rgba(0,0,0,0.03);
-            padding: 1px 8px;
-            border-radius: 6px;
-        }
-        .option.selected { border-color: #3949ab; background: #eef1fa; }
-        .option.selected .letter { background: #3949ab; color: white; }
-        .option.correct { border-color: #2e7d32; background: #e8f5e9; animation: pop 0.3s ease; }
-        .option.correct .letter { background: #2e7d32; color: white; }
-        .option.wrong { border-color: #c62828; background: #ffebee; animation: pop 0.3s ease; }
-        .option.wrong .letter { background: #c62828; color: white; }
-        .option.disabled { cursor: default; opacity: 0.75; }
-        .option.disabled:hover { transform: none; background: #f8faff; }
-
-        .progress-section { margin-bottom: 20px; }
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            color: #888;
-            margin-bottom: 6px;
-        }
-        .progress-info .done { color: #2e7d32; font-weight: 600; }
-        .progress-info .remaining { color: #c62828; font-weight: 600; }
-        .progress-bar {
-            background: #e8eaf6;
-            border-radius: 10px;
-            height: 6px;
-            overflow: hidden;
-            position: relative;
-        }
-        .progress-bar .fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            background: linear-gradient(90deg, #3949ab, #5c6bc0, #7986cb);
-            background-size: 200% 100%;
-            animation: shimmer 3s ease infinite;
-        }
-        @keyframes shimmer {
-            0% { background-position: -200% center; }
-            100% { background-position: 200% center; }
-        }
-
-        .question-nav {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            justify-content: center;
-            padding: 12px;
-            background: #f8faff;
-            border-radius: 14px;
-            margin-bottom: 16px;
-        }
-        .question-nav .q-btn {
-            width: 34px;
-            height: 34px;
-            border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            font-family: 'Inter', sans-serif;
-        }
-        .question-nav .q-btn:active { transform: scale(0.9); }
-        .question-nav .q-btn.current {
-            background: #3949ab;
-            color: white;
-            box-shadow: 0 4px 12px rgba(57, 73, 171, 0.25);
-            transform: scale(1.05);
-        }
-        .question-nav .q-btn.answered-correct {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border: 2px solid #2e7d32;
-        }
-        .question-nav .q-btn.answered-wrong {
-            background: #ffebee;
-            color: #c62828;
-            border: 2px solid #c62828;
-        }
-        .question-nav .q-btn.unanswered {
-            background: #e8eaf6;
-            color: #666;
-        }
-        .question-nav .q-btn .status-icon {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            font-size: 9px;
-        }
-
-        .btn {
-            padding: 14px 24px;
-            border: none;
-            border-radius: 14px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            font-family: 'Inter', sans-serif;
-            position: relative;
-        }
-        .btn:active { transform: scale(0.97); }
-        .btn:disabled { opacity: 0.4; transform: none; cursor: default; }
-        .btn .shortcut-hint {
-            font-size: 11px;
-            opacity: 0.6;
-            font-weight: 400;
-            position: absolute;
-            right: 16px;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #3949ab, #5c6bc0);
-            color: white;
-            box-shadow: 0 4px 16px rgba(57, 73, 171, 0.2);
-        }
-        .btn-primary:hover:not(:disabled) {
-            box-shadow: 0 6px 28px rgba(57, 73, 171, 0.3);
-            transform: translateY(-2px);
-        }
-        .btn-success {
-            background: linear-gradient(135deg, #2e7d32, #43a047);
-            color: white;
-            box-shadow: 0 4px 16px rgba(46, 125, 50, 0.2);
-        }
-        .btn-success:hover:not(:disabled) {
-            box-shadow: 0 6px 28px rgba(46, 125, 50, 0.3);
-            transform: translateY(-2px);
-        }
-        .btn-outline {
-            background: transparent;
-            color: #3949ab;
-            border: 2px solid #3949ab;
-        }
-        .btn-outline:hover:not(:disabled) {
-            background: #3949ab;
-            color: white;
-        }
-        .btn-gold {
-            background: linear-gradient(135deg, #f57f17, #ff8f00);
-            color: white;
-            box-shadow: 0 4px 16px rgba(255, 143, 0, 0.2);
-        }
-        .btn-gold:hover:not(:disabled) {
-            box-shadow: 0 6px 28px rgba(255, 143, 0, 0.3);
-            transform: translateY(-2px);
-        }
-        .btn-review {
-            background: linear-gradient(135deg, #6a1b9a, #8e24aa);
-            color: white;
-            box-shadow: 0 4px 16px rgba(106, 27, 154, 0.2);
-        }
-        .btn-review:hover:not(:disabled) {
-            box-shadow: 0 6px 28px rgba(106, 27, 154, 0.3);
-            transform: translateY(-2px);
-        }
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .fill-input {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: #f8faff;
-            font-family: 'Inter', sans-serif;
-        }
-        .fill-input:focus {
-            outline: none;
-            border-color: #3949ab;
-            box-shadow: 0 4px 16px rgba(57, 73, 171, 0.08);
-        }
-        .fill-input.correct { border-color: #2e7d32; background: #e8f5e9; }
-        .fill-input.wrong { border-color: #c62828; background: #ffebee; }
-        .fill-input:disabled { opacity: 0.7; }
-        .explanation {
-            background: #f5f7ff;
-            padding: 12px 16px;
-            border-radius: 10px;
-            margin: 10px 0;
-            font-size: 14px;
-            color: #555;
-            border-left: 4px solid #3949ab;
-        }
-
-        .result-card { text-align: center; padding: 10px 0; }
-        .result-card .score-circle {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            margin: 0 auto 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #e8eaf6, #c5cae9);
-            box-shadow: 0 8px 32px rgba(26, 35, 126, 0.1);
-            position: relative;
-        }
-        .result-card .score-circle .big {
-            font-size: 42px;
-            font-weight: 900;
-            color: #1a237e;
-            line-height: 1;
-        }
-        .result-card .score-circle .total {
-            font-size: 13px;
-            color: #666;
-        }
-        .result-card .score-circle .percent-badge {
-            position: absolute;
-            bottom: -10px;
-            background: #1a237e;
-            color: white;
-            padding: 3px 14px;
-            border-radius: 16px;
-            font-size: 13px;
-            font-weight: 700;
-        }
-        .result-card .stars { font-size: 40px; margin: 8px 0; }
-        .result-card .message {
-            font-size: 17px;
-            font-weight: 600;
-            color: #333;
-            margin: 6px 0 14px;
-        }
-        .result-card .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin: 14px 0;
-        }
-        .result-card .stats-grid .item {
-            background: #f8faff;
-            padding: 12px;
-            border-radius: 12px;
-        }
-        .result-card .stats-grid .item .num {
-            font-size: 24px;
-            font-weight: 800;
-        }
-        .result-card .stats-grid .item .label {
-            font-size: 11px;
-            color: #888;
-            margin-top: 2px;
-        }
-        .result-card .stats-grid .item .num.green { color: #2e7d32; }
-        .result-card .stats-grid .item .num.red { color: #c62828; }
-        .result-card .stats-grid .item .num.gold { color: #f57f17; }
-
-        .review-item {
-            border-radius: 14px;
-            padding: 16px 18px;
-            margin-bottom: 10px;
-            border-left: 4px solid #ddd;
-            background: #f8faff;
-            transition: all 0.2s;
-        }
-        .review-item.correct-item {
-            border-left-color: #2e7d32;
-            background: #f1f8e9;
-        }
-        .review-item.wrong-item {
-            border-left-color: #c62828;
-            background: #fff5f5;
-        }
-        .review-item .r-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-        .review-item .r-header .qnum {
-            font-weight: 700;
-            color: #333;
-            font-size: 13px;
-        }
-        .review-item .r-header .qstatus {
-            font-size: 12px;
-            font-weight: 700;
-        }
-        .review-item .r-header .qstatus.correct { color: #2e7d32; }
-        .review-item .r-header .qstatus.wrong { color: #c62828; }
-        .review-item .r-question {
-            font-weight: 600;
-            color: #1a237e;
-            font-size: 14px;
-            margin-bottom: 6px;
-        }
-        .review-item .r-options {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-        .review-item .r-options .ro {
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 13px;
-            background: white;
-        }
-        .review-item .r-options .ro.correct-answer {
-            background: #e8f5e9;
-            border: 1px solid #2e7d32;
-        }
-        .review-item .r-options .ro.user-wrong {
-            background: #ffebee;
-            border: 1px solid #c62828;
-        }
-        .review-item .r-options .ro.user-correct {
-            background: #e8f5e9;
-            border: 1px solid #2e7d32;
-        }
-        .review-item .r-options .ro.neutral {
-            background: #f5f7fa;
-            border: 1px solid #eee;
-        }
-        .review-item .r-fill {
-            font-size: 13px;
-            padding: 8px 12px;
-            border-radius: 6px;
-            background: white;
-        }
-        .review-item .r-fill .correct-ans { color: #2e7d32; font-weight: 600; }
-        .review-item .r-fill .wrong-ans { color: #c62828; font-weight: 600; }
-
-        .review-nav {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            margin: 12px 0;
-            flex-wrap: wrap;
-        }
-        .review-nav button {
-            padding: 8px 18px;
-            border: none;
-            border-radius: 10px;
-            background: #e8eaf6;
-            color: #3949ab;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
-            font-family: 'Inter', sans-serif;
-        }
-        .review-nav button:active { transform: scale(0.95); }
-        .review-nav button:disabled { opacity: 0.4; cursor: default; }
-
-        .leaderboard { margin-top: 20px; }
-        .leaderboard .title {
-            font-weight: 700;
-            color: #1a237e;
-            font-size: 18px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .leaderboard .entry {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 14px;
-            background: #f8faff;
-            border-radius: 12px;
-            margin-bottom: 6px;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-        }
-        .leaderboard .entry:hover { transform: translateX(4px); }
-        .leaderboard .entry .rank {
-            font-weight: 700;
-            color: #3949ab;
-            font-size: 15px;
-            min-width: 32px;
-        }
-        .leaderboard .entry .rank.gold { color: #f57f17; }
-        .leaderboard .entry .rank.silver { color: #90a4ae; }
-        .leaderboard .entry .rank.bronze { color: #bf8f2a; }
-        .leaderboard .entry .avatar-small {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
-            color: white;
-            flex-shrink: 0;
-        }
-        .leaderboard .entry .info { flex: 1; }
-        .leaderboard .entry .info .name { font-weight: 600; color: #333; font-size: 14px; }
-        .leaderboard .entry .info .details {
-            font-size: 11px;
-            color: #888;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .leaderboard .entry .info .details span { display: flex; align-items: center; gap: 2px; }
-        .leaderboard .entry .result-badge {
-            font-weight: 700;
-            color: #1a237e;
-            font-size: 15px;
-            background: #e8eaf6;
-            padding: 2px 12px;
-            border-radius: 16px;
-            text-align: center;
-        }
-        .leaderboard .entry .result-badge .small {
-            font-size: 9px;
-            font-weight: 400;
-            color: #888;
-            display: block;
-        }
-        .leaderboard .entry.me {
-            background: #e8eaf6;
-            border-color: #3949ab;
-        }
-
-        .marathon-status {
-            background: linear-gradient(135deg, #1a237e, #3949ab);
-            color: white;
-            border-radius: 14px;
-            padding: 14px 18px;
-            margin-bottom: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .marathon-status .score-display {
-            font-size: 26px;
-            font-weight: 800;
-        }
-        .marathon-status .score-display .star { color: #ffd54f; }
-        .marathon-status .streak-display {
-            background: rgba(255,255,255,0.15);
-            padding: 2px 14px;
-            border-radius: 16px;
-            font-size: 14px;
-            text-align: center;
-        }
-        .marathon-status .streak-display .fire { color: #ff6f00; }
-        .marathon-status .take-btn {
-            background: linear-gradient(135deg, #ff6f00, #ff8f00);
-            border: none;
-            color: white;
-            padding: 6px 18px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 111, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-        .marathon-status .take-btn:active { transform: scale(0.95); }
-        .marathon-status .progress-text {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        .mode-select {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        .mode-card {
-            background: #f5f7fa;
-            padding: 16px;
-            border-radius: 14px;
-            text-align: center;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.2s;
-        }
-        .mode-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .mode-card.active { border-color: #3949ab; background: #eef1fa; }
-        .mode-card .icon { font-size: 28px; }
-        .mode-card .label { font-weight: 700; color: #333; font-size: 14px; margin-top: 4px; }
-        .mode-card .desc { font-size: 11px; color: #888; }
-
-        .tag {
-            display: inline-block;
-            padding: 2px 12px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-        .tag-correct { background: #e8f5e9; color: #2e7d32; }
-        .tag-wrong { background: #ffebee; color: #c62828; }
-        .tag-blue { background: #e8eaf6; color: #3949ab; }
-
-        .confetti-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 999;
-            overflow: hidden;
-        }
-        .confetti {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-radius: 2px;
-            animation: confettiFall linear forwards;
-        }
-        @keyframes confettiFall {
-            0% { opacity: 1; transform: translateY(-20px) rotate(0deg); }
-            100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
-        }
-
-        .hidden { display: none !important; }
-
-        @media (max-width: 600px) {
-            body { padding: 10px; }
-            .card { padding: 18px 16px; }
-            .question-text { font-size: 16px; padding: 10px 14px; }
-            .option { font-size: 14px; padding: 12px 14px; }
-            .topbar .logo { font-size: 17px; }
-            .profile-card { flex-wrap: wrap; justify-content: center; text-align: center; }
-            .profile-card .info .stats { justify-content: center; }
-            .result-card .score-circle { width: 110px; height: 110px; }
-            .result-card .score-circle .big { font-size: 34px; }
-            .result-card .stats-grid { grid-template-columns: 1fr 1fr; }
-            .question-nav .q-btn { width: 30px; height: 30px; font-size: 11px; }
-            .btn { font-size: 14px; padding: 12px 18px; }
-            .marathon-status .score-display { font-size: 22px; }
-            .mode-select { grid-template-columns: 1fr; }
-        }
-        @media (max-width: 400px) {
-            .card { padding: 14px 12px; }
-            .question-text { font-size: 15px; }
-            .option { font-size: 13px; padding: 10px 12px; }
-            .option .letter { width: 26px; height: 26px; font-size: 12px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Тесты для логопеда</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f0f4ff; min-height: 100vh; padding: 16px; }
+#app { max-width: 820px; margin: 0 auto; }
+@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pop { 0% { transform: scale(0.96); opacity: 0; } 70% { transform: scale(1.01); } 100% { transform: scale(1); opacity: 1; } }
+.fade-in { animation: fadeSlideUp 0.4s ease forwards; }
+.pop-in { animation: pop 0.3s ease forwards; }
+.topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 0 16px 0; border-bottom: 1px solid rgba(57, 73, 171, 0.06); margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
+.topbar .logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 800; color: #1a237e; }
+.topbar .logo .icon { font-size: 26px; }
+.topbar .logo .badge { background: #e8eaf6; color: #3949ab; font-size: 9px; font-weight: 700; padding: 2px 10px; border-radius: 20px; }
+.topbar .right { display: flex; align-items: center; gap: 8px; }
+.topbar .right .user { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #1a237e; }
+.topbar .right .user .avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; }
+.btn-icon { background: none; border: none; font-size: 18px; cursor: pointer; padding: 6px 8px; border-radius: 8px; transition: all 0.2s; }
+.btn-icon:hover { background: rgba(57, 73, 171, 0.06); }
+.card { background: white; border-radius: 20px; padding: 24px 28px; box-shadow: 0 4px 20px rgba(26, 35, 126, 0.04); border: 1px solid rgba(57, 73, 171, 0.04); }
+.profile-card { display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: linear-gradient(135deg, #f5f7ff, #eef1fa); border-radius: 14px; margin-bottom: 20px; }
+.profile-card .avatar-big { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: white; flex-shrink: 0; }
+.profile-card .info { flex: 1; }
+.profile-card .info .name { font-size: 16px; font-weight: 700; color: #1a237e; }
+.profile-card .info .stats { display: flex; gap: 14px; font-size: 12px; color: #666; margin-top: 3px; flex-wrap: wrap; }
+.profile-card .info .stats .num { font-weight: 700; color: #1a237e; }
+.question-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 6px; }
+.question-header .num { font-size: 13px; font-weight: 600; color: #888; }
+.question-header .type-tag { font-size: 10px; font-weight: 700; color: #3949ab; background: #e8eaf6; padding: 2px 12px; border-radius: 20px; text-transform: uppercase; }
+.question-text { font-size: 18px; font-weight: 600; color: #1a237e; line-height: 1.6; margin-bottom: 20px; padding: 12px 16px; background: #f8faff; border-radius: 12px; border-left: 4px solid #3949ab; }
+.options-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.option { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: #f8faff; border: 2px solid transparent; border-radius: 12px; cursor: pointer; transition: all 0.25s; font-size: 15px; color: #333; }
+.option:hover:not(.disabled) { background: #eef1fa; transform: translateX(4px); }
+.option .letter { width: 30px; height: 30px; border-radius: 50%; background: #e8eaf6; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #3949ab; flex-shrink: 0; }
+.option .text { flex: 1; }
+.option .shortcut { font-size: 11px; color: #bbb; background: rgba(0,0,0,0.03); padding: 1px 8px; border-radius: 6px; }
+.option.selected { border-color: #3949ab; background: #eef1fa; }
+.option.selected .letter { background: #3949ab; color: white; }
+.option.correct { border-color: #2e7d32; background: #e8f5e9; }
+.option.correct .letter { background: #2e7d32; color: white; }
+.option.wrong { border-color: #c62828; background: #ffebee; }
+.option.wrong .letter { background: #c62828; color: white; }
+.option.disabled { cursor: default; opacity: 0.75; }
+.progress-section { margin-bottom: 20px; }
+.progress-info { display: flex; justify-content: space-between; font-size: 13px; color: #888; margin-bottom: 6px; }
+.progress-info .done { color: #2e7d32; font-weight: 600; }
+.progress-info .remaining { color: #c62828; font-weight: 600; }
+.progress-bar { background: #e8eaf6; border-radius: 10px; height: 6px; overflow: hidden; }
+.progress-bar .fill { height: 100%; border-radius: 10px; transition: width 0.5s; background: linear-gradient(90deg, #3949ab, #5c6bc0, #7986cb); }
+.question-nav { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; padding: 12px; background: #f8faff; border-radius: 14px; margin-bottom: 16px; }
+.question-nav .q-btn { width: 34px; height: 34px; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; position: relative; font-family: 'Inter', sans-serif; }
+.question-nav .q-btn.current { background: #3949ab; color: white; transform: scale(1.05); }
+.question-nav .q-btn.answered-correct { background: #e8f5e9; color: #2e7d32; border: 2px solid #2e7d32; }
+.question-nav .q-btn.answered-wrong { background: #ffebee; color: #c62828; border: 2px solid #c62828; }
+.question-nav .q-btn.unanswered { background: #e8eaf6; color: #666; }
+.question-nav .q-btn .status-icon { position: absolute; top: -4px; right: -4px; font-size: 9px; }
+.btn { padding: 14px 24px; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; font-family: 'Inter', sans-serif; position: relative; }
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn .shortcut-hint { font-size: 11px; opacity: 0.6; font-weight: 400; position: absolute; right: 16px; }
+.btn-primary { background: linear-gradient(135deg, #3949ab, #5c6bc0); color: white; box-shadow: 0 4px 16px rgba(57, 73, 171, 0.2); }
+.btn-success { background: linear-gradient(135deg, #2e7d32, #43a047); color: white; box-shadow: 0 4px 16px rgba(46, 125, 50, 0.2); }
+.btn-outline { background: transparent; color: #3949ab; border: 2px solid #3949ab; }
+.btn-outline:hover:not(:disabled) { background: #3949ab; color: white; }
+.btn-gold { background: linear-gradient(135deg, #f57f17, #ff8f00); color: white; }
+.btn-review { background: linear-gradient(135deg, #6a1b9a, #8e24aa); color: white; }
+.btn-danger { background: linear-gradient(135deg, #c62828, #e53935); color: white; }
+.btn-group { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.fill-input { width: 100%; padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; background: #f8faff; font-family: 'Inter', sans-serif; }
+.fill-input:focus { outline: none; border-color: #3949ab; }
+.fill-input.correct { border-color: #2e7d32; background: #e8f5e9; }
+.fill-input.wrong { border-color: #c62828; background: #ffebee; }
+.explanation { background: #f5f7ff; padding: 12px 16px; border-radius: 10px; margin: 10px 0; font-size: 14px; color: #555; border-left: 4px solid #3949ab; }
+.result-card { text-align: center; padding: 10px 0; }
+.result-card .score-circle { width: 130px; height: 130px; border-radius: 50%; margin: 0 auto 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #e8eaf6, #c5cae9); box-shadow: 0 8px 32px rgba(26, 35, 126, 0.1); position: relative; }
+.result-card .score-circle .big { font-size: 42px; font-weight: 900; color: #1a237e; line-height: 1; }
+.result-card .score-circle .total { font-size: 13px; color: #666; }
+.result-card .score-circle .percent-badge { position: absolute; bottom: -10px; background: #1a237e; color: white; padding: 3px 14px; border-radius: 16px; font-size: 13px; font-weight: 700; }
+.result-card .stars { font-size: 40px; margin: 8px 0; }
+.result-card .message { font-size: 17px; font-weight: 600; color: #333; margin: 6px 0 14px; }
+.result-card .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 14px 0; }
+.result-card .stats-grid .item { background: #f8faff; padding: 12px; border-radius: 12px; }
+.result-card .stats-grid .item .num { font-size: 24px; font-weight: 800; }
+.result-card .stats-grid .item .label { font-size: 11px; color: #888; margin-top: 2px; }
+.result-card .stats-grid .item .num.green { color: #2e7d32; }
+.result-card .stats-grid .item .num.red { color: #c62828; }
+.result-card .stats-grid .item .num.gold { color: #f57f17; }
+.review-item { border-radius: 14px; padding: 16px 18px; margin-bottom: 10px; border-left: 4px solid #ddd; background: #f8faff; }
+.review-item.correct-item { border-left-color: #2e7d32; background: #f1f8e9; }
+.review-item.wrong-item { border-left-color: #c62828; background: #fff5f5; }
+.review-item .r-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.review-item .r-header .qnum { font-weight: 700; color: #333; font-size: 13px; }
+.review-item .r-header .qstatus { font-size: 12px; font-weight: 700; }
+.review-item .r-header .qstatus.correct { color: #2e7d32; }
+.review-item .r-header .qstatus.wrong { color: #c62828; }
+.review-item .r-question { font-weight: 600; color: #1a237e; font-size: 14px; margin-bottom: 6px; }
+.review-item .r-options { display: flex; flex-direction: column; gap: 3px; }
+.review-item .r-options .ro { padding: 4px 10px; border-radius: 6px; font-size: 13px; background: white; }
+.review-item .r-options .ro.correct-answer { background: #e8f5e9; border: 1px solid #2e7d32; }
+.review-item .r-options .ro.user-wrong { background: #ffebee; border: 1px solid #c62828; }
+.review-item .r-options .ro.user-correct { background: #e8f5e9; border: 1px solid #2e7d32; }
+.review-item .r-options .ro.neutral { background: #f5f7fa; border: 1px solid #eee; }
+.review-item .r-fill { font-size: 13px; padding: 8px 12px; border-radius: 6px; background: white; }
+.review-item .r-fill .correct-ans { color: #2e7d32; font-weight: 600; }
+.review-item .r-fill .wrong-ans { color: #c62828; font-weight: 600; }
+.review-nav { display: flex; gap: 8px; justify-content: center; margin: 12px 0; flex-wrap: wrap; }
+.review-nav button { padding: 8px 18px; border: none; border-radius: 10px; background: #e8eaf6; color: #3949ab; font-weight: 600; cursor: pointer; font-size: 13px; }
+.review-nav button:disabled { opacity: 0.4; cursor: default; }
+.leaderboard { margin-top: 20px; }
+.leaderboard .title { font-weight: 700; color: #1a237e; font-size: 18px; margin-bottom: 12px; }
+.leaderboard .entry { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #f8faff; border-radius: 12px; margin-bottom: 6px; border: 1px solid transparent; }
+.leaderboard .entry .rank { font-weight: 700; color: #3949ab; font-size: 15px; min-width: 32px; }
+.leaderboard .entry .rank.gold { color: #f57f17; }
+.leaderboard .entry .rank.silver { color: #90a4ae; }
+.leaderboard .entry .rank.bronze { color: #bf8f2a; }
+.leaderboard .entry .avatar-small { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; flex-shrink: 0; }
+.leaderboard .entry .info { flex: 1; }
+.leaderboard .entry .info .name { font-weight: 600; color: #333; font-size: 14px; }
+.leaderboard .entry .info .details { font-size: 11px; color: #888; display: flex; gap: 10px; flex-wrap: wrap; }
+.leaderboard .entry .result-badge { font-weight: 700; color: #1a237e; font-size: 15px; background: #e8eaf6; padding: 2px 12px; border-radius: 16px; }
+.leaderboard .entry .result-badge .small { font-size: 9px; font-weight: 400; color: #888; display: block; }
+.leaderboard .entry.me { background: #e8eaf6; border-color: #3949ab; }
+.marathon-status { background: linear-gradient(135deg, #1a237e, #3949ab); color: white; border-radius: 14px; padding: 14px 18px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.marathon-status .score-display { font-size: 26px; font-weight: 800; }
+.marathon-status .streak-display { background: rgba(255,255,255,0.15); padding: 2px 14px; border-radius: 16px; font-size: 14px; text-align: center; }
+.marathon-status .take-btn { background: linear-gradient(135deg, #ff6f00, #ff8f00); border: none; color: white; padding: 6px 18px; border-radius: 20px; font-weight: 700; font-size: 13px; cursor: pointer; }
+.marathon-status .progress-text { font-size: 12px; opacity: 0.8; }
+.mode-select { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.mode-card { background: #f5f7fa; padding: 16px; border-radius: 14px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+.mode-card.active { border-color: #3949ab; background: #eef1fa; }
+.mode-card .icon { font-size: 28px; }
+.mode-card .label { font-weight: 700; color: #333; font-size: 14px; margin-top: 4px; }
+.mode-card .desc { font-size: 11px; color: #888; }
+.block-select { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.block-card { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: #f8faff; border: 2px solid transparent; border-radius: 14px; cursor: pointer; transition: all 0.25s; }
+.block-card:hover { background: #eef1fa; transform: translateX(4px); }
+.block-card.active { border-color: #3949ab; background: #eef1fa; }
+.block-card .block-icon { font-size: 26px; width: 40px; text-align: center; flex-shrink: 0; }
+.block-card .block-info { flex: 1; }
+.block-card .block-info .block-name { font-weight: 700; color: #1a237e; font-size: 15px; }
+.block-card .block-info .block-count { font-size: 12px; color: #888; margin-top: 2px; }
+.block-card .block-arrow { color: #3949ab; font-size: 18px; font-weight: 700; }
+.tag { display: inline-block; padding: 2px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+.tag-correct { background: #e8f5e9; color: #2e7d32; }
+.tag-wrong { background: #ffebee; color: #c62828; }
+.confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; overflow: hidden; }
+.confetti { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: confettiFall linear forwards; }
+@keyframes confettiFall { 0% { opacity: 1; transform: translateY(-20px) rotate(0deg); } 100% { opacity: 0; transform: translateY(100vh) rotate(720deg); } }
+.hidden { display: none !important; }
+@media (max-width: 600px) {
+body { padding: 10px; }
+.card { padding: 18px 16px; }
+.question-text { font-size: 16px; padding: 10px 14px; }
+.option { font-size: 14px; padding: 12px 14px; }
+.topbar .logo { font-size: 17px; }
+.mode-select { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 <body>
-    <div id="app"></div>
-
-    <script>
-        // ============================================================
-        // ВСЕ ВОПРОСЫ (30 вопросов для примера — вы можете добавить свои)
-        // ============================================================
-        const ALL_QUESTIONS = [
-            // Основы социологии
-            { id: 1, type: 'single', question: 'Терпимое отношение к чужому образу жизни, поведению, обычаям, мнениям, идеям, верованиям – это', options: ['Толерантность', 'Воспитанность', 'Образованность', 'Лояльность', 'Этноцентризм'], correct: 0, section: 'Основы социологии' },
-            { id: 2, type: 'multi', question: 'Какие из суждений о социальном конфликте являются верными?', options: ['Социальный конфликт – это всегда конфликт индивидуальных интересов.', 'В процессе социального конфликта стороны осознают свои интересы и стараются их защитить.', 'Все конфликты оказывают дезинтегративное, разрушительное влияние на общественную жизнь.', 'Конфликты могут быть скрытыми или явными, но в их основе всегда лежит отсутствие согласия между двумя или более сторонами.', 'Социальные конфликты могут быть вызваны неудовлетворительным материальным положением отдельных социальных групп.'], correct: [1, 3, 4], section: 'Основы социологии' },
-            { id: 3, type: 'single', question: 'Конкретное место, которое данный индивид занимает в данной социальной системе, называется:', options: ['Социальный статус', 'Социальная роль', 'Социальная позиция', 'Социальная страта'], correct: 0, section: 'Основы социологии' },
-            { id: 4, type: 'single', question: 'Социальное неравенство, основанное на этнической принадлежности, называется', options: ['национализм', 'расизм', 'сегрегация', 'апартеид'], correct: 1, section: 'Основы социологии' },
-            { id: 5, type: 'single', question: 'Изменение положения индивида или группы в системе социальной стратификации называется:', options: ['профессиональным ростом', 'социальной мобильностью', 'возрастными изменениями', 'социальной адаптацией'], correct: 1, section: 'Основы социологии' },
-            { id: 6, type: 'single', question: 'Стремление к обособлению, отделению части государства или отдельного этноса определяется понятием', options: ['сегрегация', 'апартеид', 'сепаратизм', 'национализм'], correct: 2, section: 'Основы социологии' },
-            { id: 7, type: 'single', question: 'Девиантное поведение в социологии определяется как:', options: ['отклонение от групповой нормы', 'подчинение общим правилам', 'изменение социального статуса', 'изменение места жительства'], correct: 0, section: 'Основы социологии' },
-            { id: 8, type: 'single', question: 'Формирование стабильных образцов социального взаимодействия, основанного на формализованных правилах, законах, обычаях, ритуалах - это', options: ['социальный институт', 'социальная норма', 'социальный контроль', 'социальная стратификация'], correct: 0, section: 'Основы социологии' },
-            
-            // Основы ИКТ
-            { id: 9, type: 'single', question: 'Программа Power Point используется для создания …', options: ['презентаций', 'таблиц', 'текстовых документов', 'Internet-страниц'], correct: 0, section: 'Основы ИКТ' },
-            { id: 10, type: 'single', question: 'Что такое искусственный интеллект (ИИ)?', options: ['Способность машин выполнять задачи, требующие человеческого интеллекта.', 'Компьютерная программа для обработки данных.', 'Операционная система для серверов.', 'Технология, имитирующая человеческий интеллект.'], correct: 0, section: 'Основы ИКТ' },
-            { id: 11, type: 'single', question: 'Основным элементом электронной таблицы является', options: ['ячейка', 'строка', 'столбец', 'диапазон'], correct: 0, section: 'Основы ИКТ' },
-            
-            // Охрана труда
-            { id: 12, type: 'single', question: 'Какие средства относятся к первичным средствам пожаротушения?', options: ['извещатели', 'пожарные автомобили', 'огнетушители', 'устройства звуковой и световой сигнализации'], correct: 2, section: 'Охрана труда' },
-            { id: 13, type: 'single', question: 'Здоровый образ жизни - это', options: ['двигательная активность', 'режим труда и отдыха', 'гармоничное душевное состояние', 'здоровое питание', 'все выше перечисленное'], correct: 4, section: 'Охрана труда' },
-            
-            // Педагогика
-            { id: 14, type: 'single', question: 'Вид образования, направленный на развитие личности и приобретение знаний, умений, навыков, необходимых для жизни в обществе:', options: ['общее образование', 'профессиональное образование', 'дополнительное образование', 'коррекционное образование'], correct: 0, section: 'Педагогика' },
-            { id: 15, type: 'single', question: 'Системно-деятельностный подход в педагогике связан с именами:', options: ['Я.А. Коменского, Ф. Бэкона', 'Л.С. Выготского, В.В. Давыдова, Д.Б. Эльконина', 'В.В. Краевского, И.Я. Лернера', 'А.С. Макаренко, К.Д. Ушинского'], correct: 1, section: 'Педагогика' },
-            { id: 16, type: 'single', question: 'Способы профессионального взаимодействия педагога и учащихся с целью решения образовательных задач называется:', options: ['Метод обучения', 'Контроль обучения', 'Планирование деятельности учителя', 'Общение'], correct: 0, section: 'Педагогика' },
-            
-            // Психология
-            { id: 17, type: 'single', question: 'Сопереживание, вчувствование, стремление эмоционально откликнуться на проблемы другого человека, называется:', options: ['идентификацией', 'эмпатией', 'рефлексией', 'эмоциональным состоянием'], correct: 1, section: 'Психология' },
-            { id: 18, type: 'single', question: 'Процесс адаптации индивида к жизни в обществе, процесс усвоения и воспроизводства личностью социального опыта - это:', options: ['воспитание', 'развитие', 'социализация', 'образование'], correct: 2, section: 'Психология' },
-            { id: 19, type: 'single', question: 'Система поступков человека, противоречащих культурным, нравственным, правовым нормам, это:', options: ['субкультура молодежи', 'девиантное поведение', 'аддиктивное поведение', 'делинквентное поведение'], correct: 1, section: 'Психология' },
-            
-            // История логопедии
-            { id: 20, type: 'single', question: 'Где и когда была открыта первая школа для обучающихся с ТНР:', options: ['Германия, XIX в.', 'Россия, XX в.', 'Франция, XIX в.', 'Англия, XVIII в.'], correct: 1, section: 'История логопедии' },
-            { id: 21, type: 'single', question: 'В какой период зарождается наука логопедия:', options: ['конце XIX в. – начале XX в.', '20-е гг. XX в.', '70-е гг. XIX в.', 'середина XX в.'], correct: 0, section: 'История логопедии' },
-            
-            // Методика работы
-            { id: 22, type: 'single', question: 'Каким термином обозначаются стойкие, повторяющиеся ошибки, связанные с трудностями овладения и применения орфографических правил:', options: ['дизорфографические', 'каллиграфические', 'орфографические'], correct: 0, section: 'Методика работы' },
-            { id: 23, type: 'single', question: 'Ошибочное воспроизведение слов, заключающееся в объединении в одно слово слогов, относящихся к разным словам, называется:', options: ['персеверация', 'антиципация', 'контаминация', 'аккомодация'], correct: 2, section: 'Методика работы' },
-            { id: 24, type: 'single', question: 'Нарушение понимания читаемого при технически правильном чтении характерно для дислексии:', options: ['аграмматической', 'мнестической', 'оптической', 'семантической'], correct: 3, section: 'Методика работы' },
-            { id: 25, type: 'single', question: 'Педагогический процесс, направленный на коррекцию и компенсацию нарушений речевой деятельности - это:', options: ['логопедическое воздействие', 'компенсация', 'логопедическая коррекция'], correct: 0, section: 'Методика работы' },
-            { id: 26, type: 'single', question: 'Какая форма заикания вызывается психогенными причинами (психотравмами):', options: ['неврозоподобная', 'невротическая', 'органическая'], correct: 1, section: 'Методика работы' },
-            { id: 27, type: 'single', question: 'К какому типу ошибок письма относится зеркальное написание букв:', options: ['зрительно-моторные ошибки', 'зрительно-пространственные ошибки', 'ошибки кинетического запуска', 'моторные ошибки'], correct: 1, section: 'Методика работы' },
-            { id: 28, type: 'multi', question: 'Требования к организации коррекционных занятий с детьми, имеющими речевые нарушения:', options: ['учет зоны ближайшего развития', 'проблемное обучение', 'индивидуальное нарастание степени сложности заданий', 'поэтапное формирование действий'], correct: [0, 2, 3], section: 'Методика работы' },
-            { id: 29, type: 'single', question: 'Целенаправленный процесс передачи информации, специфическая форма взаимодействия людей называется:', options: ['коммуникацией', 'коммуникативной компетентностью', 'неформальным общением'], correct: 0, section: 'Методика работы' },
-            { id: 30, type: 'fill', question: 'Федеральный закон «Об образовании в Российской Федерации» (ФЗ-273) определяет образовательную программу как комплекс основных характеристик образования и организационно-педагогических условий, который представлен в виде учебного плана, календарного учебного графика, рабочих программ учебных предметов, курсов, дисциплин (модулей), иных компонентов, оценочных и методических материалов, а также в предусмотренных случаях в виде рабочей ______, календарного плана воспитательной работы, форм аттестации.', correct: 'программы воспитания', section: 'Методика воспитания' }
-        ];
-
-        // ============================================================
-        // ЛОГИКА ПРИЛОЖЕНИЯ
-        // ============================================================
-        
-        let state = {
-            mode: 'classic',
-            questions: [],
-            currentIndex: 0,
-            score: 0,
-            totalQuestions: 20,
-            answered: false,
-            selectedAnswers: [],
-            streak: 0,
-            maxStreak: 0,
-            marathonScore: 0,
-            // ДЛЯ МАРАФОНА — правильные ответы считаем отдельно!
-            marathonCorrect: 0,
-            marathonAnswered: 0,
-            isFinished: false,
-            history: [],
-            reviewMode: false,
-            reviewIndex: 0,
-            highlightedOption: -1,
-            questionStatus: [],
-            userAnswers: {},
-            username: 'Гость',
-            profile: null
-        };
-
-        const letters = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ж', 'З', 'И', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф'];
-        const PROFILES_KEY = 'logoped_profiles';
-        const LEADERBOARD_KEY = 'logoped_leaderboard';
-
-        // ===== ЦВЕТА =====
-        const AVATAR_COLORS = ['#3949ab', '#2e7d32', '#c62828', '#f57f17', '#6a1b9a', '#00838f', '#ad1457', '#1565c0'];
-
-        function getAvatarColor(name) {
-            let hash = 0;
-            for (let i = 0; i < name.length; i++) {
-                hash = name.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
-        }
-
-        function getAvatarLetter(name) {
-            return name.charAt(0).toUpperCase();
-        }
-
-        // ===== ПРОФИЛИ =====
-        function getProfiles() {
-            try { return JSON.parse(localStorage.getItem(PROFILES_KEY)) || {}; } catch { return {}; }
-        }
-
-        function saveProfiles(profiles) {
-            localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
-        }
-
-        function getOrCreateProfile(name) {
-            const profiles = getProfiles();
-            if (!profiles[name]) {
-                profiles[name] = { name: name, gamesPlayed: 0, totalCorrect: 0, totalQuestions: 0, bestScore: 0, bestPercent: 0, createdAt: new Date().toISOString() };
-                saveProfiles(profiles);
-            }
-            return profiles[name];
-        }
-
-        function updateProfile(name, gameResult) {
-            const profiles = getProfiles();
-            if (!profiles[name]) {
-                profiles[name] = { name: name, gamesPlayed: 0, totalCorrect: 0, totalQuestions: 0, bestScore: 0, bestPercent: 0, createdAt: new Date().toISOString() };
-            }
-            const p = profiles[name];
-            p.gamesPlayed += 1;
-            p.totalCorrect += gameResult.correct;
-            p.totalQuestions += gameResult.total;
-            const percent = gameResult.total > 0 ? Math.round((gameResult.correct / gameResult.total) * 100) : 0;
-            if (gameResult.correct > p.bestScore) p.bestScore = gameResult.correct;
-            if (percent > p.bestPercent) p.bestPercent = percent;
-            saveProfiles(profiles);
-            return p;
-        }
-
-        // ===== ТАБЛИЦА ЛИДЕРОВ =====
-        function getLeaderboard() {
-            try { return JSON.parse(localStorage.getItem(LEADERBOARD_KEY)) || []; } catch { return []; }
-        }
-
-        function saveLeaderboard(board) {
-            localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(board));
-        }
-
-        function updateLeaderboard(name) {
-            const profiles = getProfiles();
-            const board = getLeaderboard();
-            const filtered = board.filter(item => item.name !== name);
-            if (profiles[name]) {
-                const p = profiles[name];
-                const avgPercent = p.totalQuestions > 0 ? Math.round((p.totalCorrect / p.totalQuestions) * 100) : 0;
-                filtered.push({ name: name, gamesPlayed: p.gamesPlayed, totalCorrect: p.totalCorrect, totalQuestions: p.totalQuestions, avgPercent: avgPercent, bestScore: p.bestScore, bestPercent: p.bestPercent });
-            }
-            filtered.sort((a, b) => b.bestScore - a.bestScore || b.avgPercent - a.avgPercent);
-            saveLeaderboard(filtered);
-            return filtered;
-        }
-
-        // ===== ОСТАЛЬНЫЕ =====
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function getRandomQuestions(count = 20) {
-            const shuffled = shuffle([...ALL_QUESTIONS]);
-            return shuffled.slice(0, count);
-        }
-
-        function getTypeLabel(type) {
-            if (type === 'single') return 'Один ответ';
-            if (type === 'multi') return 'Несколько ответов';
-            if (type === 'fill') return 'Вставка слова';
-            return type;
-        }
-
-        function getTypeIcon(type) {
-            if (type === 'single') return '◉';
-            if (type === 'multi') return '☑';
-            if (type === 'fill') return '✎';
-            return '•';
-        }
-
-        function showConfetti() {
-            const container = document.createElement('div');
-            container.className = 'confetti-container';
-            const colors = ['#f44336', '#e91e63', '#9c27b0', '#3f51b5', '#4caf50', '#ff9800', '#ffeb3b', '#00bcd4'];
-            for (let i = 0; i < 50; i++) {
-                const el = document.createElement('div');
-                el.className = 'confetti';
-                el.style.left = Math.random() * 100 + '%';
-                el.style.background = colors[Math.floor(Math.random() * colors.length)];
-                el.style.width = (6 + Math.random() * 8) + 'px';
-                el.style.height = (6 + Math.random() * 8) + 'px';
-                el.style.animationDuration = (2 + Math.random() * 3) + 's';
-                el.style.animationDelay = Math.random() * 1.5 + 's';
-                el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-                container.appendChild(el);
-            }
-            document.body.appendChild(container);
-            setTimeout(() => container.remove(), 5000);
-        }
-
-        // ===== КЛАВИАТУРА =====
-        function handleKeyDown(e) {
-            if (e.target.tagName === 'INPUT') {
-                if (e.key === 'Enter') {
-                    const btn = document.getElementById('checkBtn');
-                    if (btn && !btn.disabled) btn.click();
-                }
-                return;
-            }
-            if (!state.answered && !state.reviewMode && state.questions.length > 0) {
-                const options = document.querySelectorAll('.option:not(.disabled)');
-                if (options.length > 0) {
-                    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-                        e.preventDefault();
-                        state.highlightedOption = (state.highlightedOption + 1) % options.length;
-                        highlightOption(options, state.highlightedOption);
-                    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-                        e.preventDefault();
-                        state.highlightedOption = (state.highlightedOption - 1 + options.length) % options.length;
-                        highlightOption(options, state.highlightedOption);
-                    }
-                }
-            }
-            if (!state.answered && !state.reviewMode && state.questions.length > 0) {
-                const num = parseInt(e.key);
-                if (num >= 1 && num <= 9) {
-                    const options = document.querySelectorAll('.option:not(.disabled)');
-                    if (options.length >= num) {
-                        options[num - 1].click();
-                        state.highlightedOption = num - 1;
-                    }
-                }
-            }
-            if (e.key === 'Enter' && state.questions.length > 0) {
-                const nextBtn = document.getElementById('nextBtn');
-                if (nextBtn && !nextBtn.classList.contains('hidden')) {
-                    nextBtn.click();
-                    return;
-                }
-                const checkBtn = document.getElementById('checkBtn');
-                if (checkBtn && !checkBtn.disabled) {
-                    checkBtn.click();
-                }
-            }
-            if (e.key === 'Escape') {
-                if (state.reviewMode) renderHome();
-                else renderHome();
-            }
-            if (state.reviewMode) {
-                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    reviewNext();
-                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    reviewPrev();
-                }
-            }
-        }
-
-        function highlightOption(options, index) {
-            options.forEach((el, i) => {
-                el.classList.toggle('highlighted', i === index);
-            });
-            if (options[index]) {
-                options[index].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-            }
-        }
-
-        // ============================================================
-        // ОТОБРАЖЕНИЕ
-        // ============================================================
-
-        function renderHome() {
-            state.reviewMode = false;
-            state.highlightedOption = -1;
-            state.profile = getOrCreateProfile(state.username);
-            updateLeaderboard(state.username);
-            const board = getLeaderboard();
-            const app = document.getElementById('app');
-            const color = getAvatarColor(state.username);
-            
-            let html = `
-                <div class="topbar">
-                    <div class="logo">
-                        <span class="icon">📚</span>
-                        Тесты логопеда
-                        <span class="badge">v2.0</span>
-                    </div>
-                    <div class="right">
-                        <div class="user">
-                            <div class="avatar" style="background:${color}">${getAvatarLetter(state.username)}</div>
-                            <span>${state.username}</span>
-                        </div>
-                        <button class="btn-icon" onclick="changeName()" title="Сменить имя">✏️</button>
-                    </div>
-                </div>
-            `;
-
-            if (state.profile) {
-                const p = state.profile;
-                const avg = p.totalQuestions > 0 ? Math.round((p.totalCorrect / p.totalQuestions) * 100) : 0;
-                html += `
-                    <div class="profile-card">
-                        <div class="avatar-big" style="background:${color}">${getAvatarLetter(state.username)}</div>
-                        <div class="info">
-                            <div class="name">${state.username}</div>
-                            <div class="stats">
-                                <span>🎮 <span class="num">${p.gamesPlayed}</span> игр</span>
-                                <span>✅ <span class="num">${p.totalCorrect}</span>/<span class="num">${p.totalQuestions}</span></span>
-                                <span>🏆 <span class="num">${p.bestScore}</span> макс</span>
-                                <span>📊 <span class="num">${avg}%</span></span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // РЕЖИМЫ
-            html += `
-                <div class="mode-select">
-                    <div class="mode-card ${state.mode === 'classic' ? 'active' : ''}" onclick="selectMode('classic')">
-                        <div class="icon">📝</div>
-                        <div class="label">Классический</div>
-                        <div class="desc">${state.totalQuestions} случайных вопросов</div>
-                    </div>
-                    <div class="mode-card ${state.mode === 'marathon' ? 'active' : ''}" onclick="selectMode('marathon')">
-                        <div class="icon">🏃</div>
-                        <div class="label">Марафон</div>
-                        <div class="desc">Все ${ALL_QUESTIONS.length} вопросов</div>
-                    </div>
-                </div>
-
-                <button class="btn btn-primary" onclick="startGame()">🚀 Начать тест</button>
-
-                <div class="leaderboard">
-                    <div class="title">🏆 Таблица лидеров</div>
-            `;
-
-            if (board.length === 0) {
-                html += `<div style="text-align:center;color:#888;padding:20px;">Пока нет результатов</div>`;
-            } else {
-                board.slice(0, 10).forEach((entry, index) => {
-                    const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
-                    const isMe = entry.name === state.username;
-                    const entryColor = getAvatarColor(entry.name);
-                    html += `
-                        <div class="entry ${isMe ? 'me' : ''}">
-                            <div class="rank ${index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''}">${medal}</div>
-                            <div class="avatar-small" style="background:${entryColor}">${getAvatarLetter(entry.name)}</div>
-                            <div class="info">
-                                <div class="name">${entry.name}</div>
-                                <div class="details">
-                                    <span>🎮 ${entry.gamesPlayed} игр</span>
-                                    <span>✅ ${entry.totalCorrect}/${entry.totalQuestions}</span>
-                                    <span>🏆 ${entry.bestScore}</span>
-                                    <span>📊 ${entry.avgPercent}%</span>
-                                </div>
-                            </div>
-                            <div class="result-badge">
-                                ${entry.bestScore}
-                                <span class="small">лучший</span>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-
-            html += `</div>`;
-            app.innerHTML = html;
-        }
-
-        function changeName() {
-            const newName = prompt('Введите ваше имя:', state.username);
-            if (newName && newName.trim()) {
-                state.username = newName.trim();
-                state.profile = getOrCreateProfile(state.username);
-                updateLeaderboard(state.username);
-                renderHome();
-            }
-        }
-
-        function selectMode(mode) {
-            state.mode = mode;
-            renderHome();
-        }
-
-        // ===== СТАРТ ИГРЫ =====
-        function startGame() {
-            if (state.mode === 'marathon') {
-                state.questions = shuffle([...ALL_QUESTIONS]);
-                state.totalQuestions = state.questions.length;
-            } else {
-                state.questions = getRandomQuestions(20);
-                state.totalQuestions = state.questions.length;
-            }
-            
-            state.questionStatus = new Array(state.questions.length).fill('unanswered');
-            state.userAnswers = {};
-            state.currentIndex = 0;
-            state.score = 0;
-            state.streak = 0;
-            state.maxStreak = 0;
-            state.marathonScore = 0;
-            state.marathonCorrect = 0;      // ← ОБНУЛЯЕМ
-            state.marathonAnswered = 0;      // ← ОБНУЛЯЕМ
-            state.isFinished = false;
-            state.answered = false;
-            state.history = [];
-            state.reviewMode = false;
-            state.highlightedOption = -1;
-            
-            renderQuestion();
-        }
-
-        // ===== ОТОБРАЖЕНИЕ ВОПРОСА =====
-        function renderQuestion() {
-            if (state.isFinished || state.currentIndex >= state.questions.length) {
-                renderResult();
-                return;
-            }
-
-            const q = state.questions[state.currentIndex];
-            state.answered = false;
-            state.selectedAnswers = [];
-            state.highlightedOption = -1;
-
-            const app = document.getElementById('app');
-            const isMarathon = state.mode === 'marathon';
-            const total = state.questions.length;
-            const progress = ((state.currentIndex + 1) / total * 100);
-            const correctCount = state.questionStatus.filter(s => s === 'correct').length;
-            const wrongCount = state.questionStatus.filter(s => s === 'wrong').length;
-            const color = getAvatarColor(state.username);
-            const remaining = total - state.currentIndex;
-            
-            let html = `
-                <div class="topbar">
-                    <div class="logo">
-                        <span class="icon">${isMarathon ? '🏃' : '📚'}</span>
-                        ${isMarathon ? 'Марафон' : 'Тесты'}
-                        <span class="badge">${state.username}</span>
-                        ${isMarathon ? `<span class="badge" style="background:#2e7d32;color:white;">Осталось ${remaining}</span>` : ''}
-                    </div>
-                    <div class="right">
-                        <div class="user">
-                            <div class="avatar" style="background:${color}">${getAvatarLetter(state.username)}</div>
-                        </div>
-                        <button class="btn-icon" onclick="renderHome()" title="Главная (Esc)">🏠</button>
-                    </div>
-                </div>
-            `;
-
-            if (isMarathon) {
-                // В марафоне показываем правильные ответы
-                const answered = state.currentIndex;
-                const correct = state.marathonCorrect;
-                html += `
-                    <div class="marathon-status">
-                        <div>
-                            <div class="score-display"><span class="star">⭐</span> ${state.marathonScore}</div>
-                            <div class="progress-text">очков</div>
-                        </div>
-                        <div>
-                            <div class="streak-display">✅ ${correct}/${answered || 1}</div>
-                            <div class="progress-text">правильных</div>
-                        </div>
-                        <div>
-                            <div class="streak-display">🔥 ${state.streak} <span class="fire">🔥</span></div>
-                            <div class="progress-text">рекорд: ${state.maxStreak}</div>
-                        </div>
-                        <button class="take-btn" onclick="takeMarathonScore()">💰 Забрать</button>
-                    </div>
-                `;
-            } else {
-                html += `
-                    <div class="progress-section">
-                        <div class="progress-info">
-                            <span>Вопрос <strong>${state.currentIndex + 1}</strong> из ${total}</span>
-                            <span><span class="done">✅ ${correctCount}</span> <span class="remaining">❌ ${wrongCount}</span></span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="fill" style="width: ${progress}%;"></div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // Навигация
-            html += `<div class="question-nav">`;
-            const showCount = Math.min(total, 30);
-            const startIdx = Math.max(0, Math.min(state.currentIndex - 8, total - showCount));
-            const endIdx = Math.min(total, startIdx + showCount);
-            for (let i = startIdx; i < endIdx; i++) {
-                const status = state.questionStatus[i] || 'unanswered';
-                let cls = 'unanswered';
-                let icon = '';
-                if (status === 'correct') { cls = 'answered-correct'; icon = '✅'; }
-                else if (status === 'wrong') { cls = 'answered-wrong'; icon = '❌'; }
-                const isCurrent = i === state.currentIndex;
-                html += `
-                    <button class="q-btn ${cls} ${isCurrent ? 'current' : ''}" onclick="goToQuestion(${i})" title="Вопрос ${i+1}">
-                        ${i + 1}
-                        ${icon ? `<span class="status-icon">${icon}</span>` : ''}
-                    </button>
-                `;
-            }
-            html += `</div>`;
-
-            // Вопрос
-            html += `
-                <div class="card fade-in">
-                    <div class="question-header">
-                        <span class="num">${q.section ? q.section + ' — ' : ''}Вопрос ${state.currentIndex + 1}</span>
-                        <span class="type-tag">${getTypeIcon(q.type)} ${getTypeLabel(q.type)}</span>
-                    </div>
-                    <div class="question-text">${q.question}</div>
-                    <div class="options-grid">
-            `;
-
-            if (q.type === 'single' || q.type === 'multi') {
-                const isMulti = q.type === 'multi';
-                q.options.forEach((opt, idx) => {
-                    const num = idx + 1;
-                    html += `
-                        <div class="option" data-index="${idx}" onclick="${isMulti ? `selectMulti(${idx})` : `selectSingle(${idx})`}">
-                            <span class="letter">${letters[idx]}</span>
-                            <span class="text">${opt}</span>
-                            <span class="shortcut">${num}</span>
-                        </div>
-                    `;
-                });
-                if (isMulti) {
-                    html += `<div style="font-size:12px;color:#888;margin-top:4px;">💡 Выберите несколько вариантов</div>`;
-                }
-            } else if (q.type === 'fill') {
-                html += `
-                    <input type="text" class="fill-input" id="fillInput" placeholder="✏️ Введите ответ..." oninput="onFillInput()">
-                    <div style="font-size:12px;color:#888;margin-top:4px;">💡 Введите пропущенное слово</div>
-                `;
-            }
-
-            html += `
-                    </div>
-                    <button class="btn btn-primary" id="checkBtn" onclick="checkAnswer()" disabled>
-                        ✅ Проверить <span class="shortcut-hint">⏎</span>
-                    </button>
-                    <button class="btn btn-success hidden" id="nextBtn" onclick="nextQuestion()">
-                        ${isMarathon ? '➡️ Следующий' : (state.currentIndex < state.questions.length - 1 ? '➡️ Следующий вопрос' : '🎉 Посмотреть результат')}
-                        <span class="shortcut-hint">⏎</span>
-                    </button>
-                    ${isMarathon ? `<button class="btn btn-outline" onclick="takeMarathonScore()" style="margin-top:6px;">💰 Забрать очки и выйти</button>` : ''}
-                </div>
-            `;
-
-            app.innerHTML = html;
-
-            if (state.userAnswers[state.currentIndex] && state.questionStatus[state.currentIndex] !== 'unanswered') {
-                const saved = state.userAnswers[state.currentIndex];
-                const options = document.querySelectorAll('.option');
-                options.forEach((el, i) => {
-                    if (saved.includes(i)) {
-                        el.classList.add('selected');
-                    }
-                });
-                state.selectedAnswers = saved;
-                document.getElementById('checkBtn').disabled = false;
-            }
-
-            if (q.type === 'fill') {
-                const input = document.getElementById('fillInput');
-                if (input) {
-                    input.addEventListener('input', () => {
-                        document.getElementById('checkBtn').disabled = input.value.trim() === '';
-                    });
-                    setTimeout(() => input.focus(), 100);
-                }
-            }
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function goToQuestion(index) {
-            if (index >= 0 && index < state.questions.length) {
-                state.currentIndex = index;
-                renderQuestion();
-            }
-        }
-
-        function selectSingle(index) {
-            if (state.answered) return;
-            const options = document.querySelectorAll('.option');
-            options.forEach((el, i) => {
-                el.classList.toggle('selected', i === index);
-            });
-            state.selectedAnswers = [index];
-            document.getElementById('checkBtn').disabled = false;
-            state.highlightedOption = index;
-        }
-
-        function selectMulti(index) {
-            if (state.answered) return;
-            const el = document.querySelector(`.option[data-index="${index}"]`);
-            if (el.classList.contains('selected')) {
-                el.classList.remove('selected');
-                state.selectedAnswers = state.selectedAnswers.filter(i => i !== index);
-            } else {
-                el.classList.add('selected');
-                state.selectedAnswers.push(index);
-            }
-            document.getElementById('checkBtn').disabled = state.selectedAnswers.length === 0;
-            state.highlightedOption = index;
-        }
-
-        function onFillInput() {
-            const input = document.getElementById('fillInput');
-            if (input) {
-                document.getElementById('checkBtn').disabled = input.value.trim() === '';
-            }
-        }
-
-        function checkAnswer() {
-            if (state.answered) return;
-            const q = state.questions[state.currentIndex];
-            let correct = false;
-            let userAnswer = '';
-
-            if (q.type === 'single') {
-                userAnswer = q.options[state.selectedAnswers[0]] || '';
-                correct = state.selectedAnswers[0] === q.correct;
-                const options = document.querySelectorAll('.option');
-                options.forEach((el, i) => {
-                    el.classList.add('disabled');
-                    if (i === q.correct) el.classList.add('correct');
-                    if (i === state.selectedAnswers[0] && i !== q.correct) el.classList.add('wrong');
-                });
-            } else if (q.type === 'multi') {
-                const correctAnswers = q.correct;
-                userAnswer = state.selectedAnswers.map(i => q.options[i]).join(', ');
-                const options = document.querySelectorAll('.option');
-                options.forEach((el, i) => {
-                    el.classList.add('disabled');
-                    if (correctAnswers.includes(i)) el.classList.add('correct');
-                    if (state.selectedAnswers.includes(i) && !correctAnswers.includes(i)) el.classList.add('wrong');
-                });
-                const sortedSelected = state.selectedAnswers.slice().sort();
-                const sortedCorrect = correctAnswers.slice().sort();
-                correct = sortedSelected.join(',') === sortedCorrect.join(',');
-            } else if (q.type === 'fill') {
-                const input = document.getElementById('fillInput');
-                userAnswer = input.value.trim();
-                const correctAnswer = q.correct;
-                correct = userAnswer.toLowerCase() === correctAnswer.toLowerCase() || 
-                         userAnswer.toLowerCase().includes(correctAnswer.toLowerCase()) || 
-                         correctAnswer.toLowerCase().includes(userAnswer.toLowerCase());
-                input.classList.add(correct ? 'correct' : 'wrong');
-                input.disabled = true;
-                const explanation = document.createElement('div');
-                explanation.className = 'explanation';
-                explanation.innerHTML = `✅ Правильный ответ: <strong>${q.correct}</strong>`;
-                input.parentNode.insertBefore(explanation, input.nextSibling);
-            }
-
-            // Сохраняем в историю
-            state.history.push({
-                question: q,
-                userAnswer: userAnswer,
-                selectedIndexes: state.selectedAnswers ? [...state.selectedAnswers] : [],
-                correct: correct,
-                userAnswerText: userAnswer
-            });
-
-            // Обновляем статус вопроса
-            state.questionStatus[state.currentIndex] = correct ? 'correct' : 'wrong';
-            state.userAnswers[state.currentIndex] = [...state.selectedAnswers];
-
-            state.answered = true;
-            
-            if (state.mode === 'marathon') {
-                // В МАРАФОНЕ считаем правильные ответы отдельно!
-                state.marathonAnswered++;
-                if (correct) {
-                    state.marathonCorrect++;
-                    state.marathonScore += 10 + state.streak * 2;
-                    state.streak++;
-                    if (state.streak > state.maxStreak) state.maxStreak = state.streak;
-                } else {
-                    state.streak = 0;
-                }
-                // Обновляем статус марафона
-                const statusDiv = document.querySelector('.marathon-status');
-                if (statusDiv) {
-                    const answered = state.marathonAnswered;
-                    const correctCount = state.marathonCorrect;
-                    statusDiv.querySelector('.score-display').innerHTML = `<span class="star">⭐</span> ${state.marathonScore}`;
-                    // Обновляем правильные ответы
-                    const correctSpan = statusDiv.querySelectorAll('.streak-display')[0];
-                    if (correctSpan) {
-                        correctSpan.innerHTML = `✅ ${correctCount}/${answered}`;
-                    }
-                    const streakSpan = statusDiv.querySelectorAll('.streak-display')[1];
-                    if (streakSpan) {
-                        streakSpan.innerHTML = `🔥 ${state.streak} <span class="fire">🔥</span>`;
-                    }
-                }
-            } else {
-                if (correct) state.score++;
-            }
-
-            document.getElementById('checkBtn').disabled = true;
-            document.getElementById('nextBtn').classList.remove('hidden');
-            document.getElementById('nextBtn').focus();
-            renderQuestionNavOnly();
-        }
-
-        function renderQuestionNavOnly() {
-            const nav = document.querySelector('.question-nav');
-            if (!nav) return;
-            const total = state.questions.length;
-            const showCount = Math.min(total, 30);
-            const startIdx = Math.max(0, Math.min(state.currentIndex - 8, total - showCount));
-            const endIdx = Math.min(total, startIdx + showCount);
-            let html = '';
-            for (let i = startIdx; i < endIdx; i++) {
-                const status = state.questionStatus[i] || 'unanswered';
-                let cls = 'unanswered';
-                let icon = '';
-                if (status === 'correct') { cls = 'answered-correct'; icon = '✅'; }
-                else if (status === 'wrong') { cls = 'answered-wrong'; icon = '❌'; }
-                const isCurrent = i === state.currentIndex;
-                html += `
-                    <button class="q-btn ${cls} ${isCurrent ? 'current' : ''}" onclick="goToQuestion(${i})" title="Вопрос ${i+1}">
-                        ${i + 1}
-                        ${icon ? `<span class="status-icon">${icon}</span>` : ''}
-                    </button>
-                `;
-            }
-            nav.innerHTML = html;
-        }
-
-        function nextQuestion() {
-            let nextIndex = state.currentIndex + 1;
-            if (state.mode === 'classic') {
-                const unanswered = state.questionStatus.findIndex(s => s === 'unanswered');
-                if (unanswered !== -1 && unanswered > state.currentIndex) {
-                    nextIndex = unanswered;
-                }
-            }
-            if (nextIndex >= state.questions.length) {
-                renderResult();
-                return;
-            }
-            state.currentIndex = nextIndex;
-            renderQuestion();
-        }
-
-        function takeMarathonScore() {
-            if (state.marathonScore === 0 && state.currentIndex === 0) {
-                if (!confirm('Вы ещё не набрали очков. Уверены, что хотите выйти?')) return;
-            }
-            const name = state.username;
-            const totalAnswered = state.marathonAnswered || 1;
-            const gameResult = { 
-                correct: state.marathonCorrect, 
-                total: totalAnswered, 
-                marathonScore: state.marathonScore 
-            };
-            state.profile = updateProfile(name, gameResult);
-            updateLeaderboard(name);
-            alert(`🏆 ${name}, вы набрали ${state.marathonScore} очков!\n✅ Правильных ответов: ${state.marathonCorrect} из ${totalAnswered}\n🔥 Максимальная серия: ${state.maxStreak}`);
-            state.isFinished = true;
-            renderHome();
-        }
-
-        function renderResult() {
-            const app = document.getElementById('app');
-            const total = state.questions.length;
-            // Для марафона используем marathonCorrect
-            let score = state.mode === 'marathon' ? state.marathonCorrect : state.score;
-            const percent = Math.round((score / total) * 100);
-            let stars = '', message = '';
-            if (percent >= 90) { stars = '🌟🌟🌟'; message = 'Отлично! Вы настоящий эксперт! 🎉'; showConfetti(); }
-            else if (percent >= 70) { stars = '🌟🌟'; message = 'Хороший результат! Так держать! 💪'; }
-            else if (percent >= 50) { stars = '🌟'; message = 'Неплохо, но есть куда расти! 📚'; }
-            else { stars = '📚'; message = 'Нужно ещё немного позаниматься! 💪'; }
-
-            const name = state.username;
-            const gameResult = { correct: score, total: total, marathonScore: 0 };
-            state.profile = updateProfile(name, gameResult);
-            updateLeaderboard(name);
-
-            app.innerHTML = `
-                <div class="topbar">
-                    <div class="logo">
-                        <span class="icon">📊</span>
-                        Результаты
-                        <span class="badge">${state.username}</span>
-                        ${state.mode === 'marathon' ? `<span class="badge" style="background:#2e7d32;color:white;">🏃 Марафон</span>` : ''}
-                    </div>
-                    <div class="right">
-                        <button class="btn-icon" onclick="renderHome()" title="Главная">🏠</button>
-                    </div>
-                </div>
-                <div class="card fade-in">
-                    <div class="result-card">
-                        <div class="score-circle">
-                            <div class="big">${score}</div>
-                            <div class="total">из ${total}</div>
-                            <div class="percent-badge">${percent}%</div>
-                        </div>
-                        <div class="stars">${stars}</div>
-                        <div class="message">${message}</div>
-                        <div class="stats-grid">
-                            <div class="item"><div class="num green">${score}</div><div class="label">✅ Верно</div></div>
-                            <div class="item"><div class="num red">${total - score}</div><div class="label">❌ Неверно</div></div>
-                            <div class="item"><div class="num gold">${percent}%</div><div class="label">🎯 Процент</div></div>
-                        </div>
-                        <div class="btn-group">
-                            <button class="btn btn-primary" onclick="startGame()">🔄 Пройти снова</button>
-                            <button class="btn btn-review" onclick="renderReview()">📖 Просмотреть вопросы</button>
-                            <button class="btn btn-gold" onclick="renderHome()">🏆 Таблица лидеров</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // ===== ПРОСМОТР =====
-        function renderReview() {
-            state.reviewMode = true;
-            state.reviewIndex = 0;
-            renderReviewPage();
-        }
-
-        function renderReviewPage() {
-            const app = document.getElementById('app');
-            const total = state.history.length;
-            const q = state.history[state.reviewIndex];
-            if (!q) { renderHome(); return; }
-            const isCorrect = q.correct;
-            const statusText = isCorrect ? '✅ Правильно' : '❌ Неправильно';
-            const statusClass = isCorrect ? 'correct' : 'wrong';
-
-            let html = `
-                <div class="topbar">
-                    <div class="logo"><span class="icon">📖</span> Просмотр <span class="badge">${state.reviewIndex + 1}/${total}</span></div>
-                    <div class="right"><button class="btn-icon" onclick="renderHome()" title="Главная (Esc)">🏠</button></div>
-                </div>
-                <div style="text-align:center;margin-bottom:12px;"><span class="tag ${statusClass}">${statusText}</span></div>
-                <div class="review-item ${isCorrect ? 'correct-item' : 'wrong-item'}">
-                    <div class="r-header"><span class="qnum">Вопрос #${state.reviewIndex + 1}</span><span class="qstatus ${statusClass}">${statusText}</span></div>
-                    <div class="r-question">${q.question.question}</div>
-                    <div style="font-size:11px;color:#888;margin:4px 0;">${q.question.section || ''} · ${getTypeLabel(q.question.type)}</div>
-            `;
-
-            if (q.question.type === 'single' || q.question.type === 'multi') {
-                html += `<div class="r-options">`;
-                const correctAnswers = Array.isArray(q.question.correct) ? q.question.correct : [q.question.correct];
-                q.question.options.forEach((opt, idx) => {
-                    let cls = 'neutral';
-                    let isUserSelected = q.selectedIndexes.includes(idx);
-                    let isCorrectAnswer = correctAnswers.includes(idx);
-                    if (isCorrectAnswer && isUserSelected) cls = 'user-correct';
-                    else if (isCorrectAnswer) cls = 'correct-answer';
-                    else if (isUserSelected) cls = 'user-wrong';
-                    const icon = isCorrectAnswer ? '✅' : (isUserSelected ? '❌' : '');
-                    html += `<div class="ro ${cls}">${letters[idx]}. ${opt} ${icon}${isUserSelected && !isCorrectAnswer ? ' (ваш ответ)' : ''}${isCorrectAnswer && !isUserSelected ? ' (правильный)' : ''}</div>`;
-                });
-                html += `</div>`;
-                if (q.userAnswer) {
-                    html += `<div style="margin-top:8px;font-size:13px;color:#555;">Ваш ответ: <strong>${q.userAnswer || 'не выбран'}</strong></div>`;
-                }
-            } else if (q.question.type === 'fill') {
-                const isCorrectFill = q.correct;
-                html += `<div class="r-fill"><div>Ваш ответ: <span class="${isCorrectFill ? 'correct-ans' : 'wrong-ans'}">${q.userAnswer || '(пусто)'}</span></div><div style="margin-top:4px;">Правильный ответ: <span class="correct-ans">${q.question.correct}</span></div></div>`;
-            }
-
-            html += `</div>
-                <div class="review-nav">
-                    <button onclick="reviewPrev()" ${state.reviewIndex === 0 ? 'disabled' : ''}>◀ Назад</button>
-                    <button onclick="renderHome()">🏠</button>
-                    <button onclick="reviewNext()" ${state.reviewIndex >= total - 1 ? 'disabled' : ''}>Вперёд ▶</button>
-                </div>
-                <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:6px;">
-            `;
-            const maxShow = 20;
-            const start = Math.max(0, state.reviewIndex - 8);
-            const end = Math.min(total, start + 16);
-            for (let i = start; i < end; i++) {
-                const isActive = i === state.reviewIndex;
-                const h = state.history[i];
-                const cls = h.correct ? '✅' : '❌';
-                html += `<button onclick="goToReview(${i})" style="padding:4px 8px;border:none;border-radius:4px;${isActive ? 'background:#3949ab;color:white;' : 'background:#e8eaf6;color:#333;'}font-size:11px;cursor:pointer;min-width:26px;">${i + 1}${cls}</button>`;
-            }
-            html += `</div>`;
-            app.innerHTML = html;
-        }
-
-        function reviewPrev() {
-            if (state.reviewIndex > 0) { state.reviewIndex--; renderReviewPage(); }
-        }
-        function reviewNext() {
-            if (state.reviewIndex < state.history.length - 1) { state.reviewIndex++; renderReviewPage(); }
-        }
-        function goToReview(index) {
-            if (index >= 0 && index < state.history.length) { state.reviewIndex = index; renderReviewPage(); }
-        }
-
-        // ============================================================
-        // ПОДПИСКА НА КЛАВИАТУРУ
-        // ============================================================
-        document.addEventListener('keydown', handleKeyDown);
-
-        // ============================================================
-        // ЗАПУСК
-        // ============================================================
-        renderHome();
-    </script>
+<div id="app"></div>
+<script>
+// ============================================================
+// БАЗА ВОПРОСОВ (251 вопрос)
+// ============================================================
+const ALL_QUESTIONS = [
+{ id: 1, type: 'single', question: 'Социокультурные ценности – это:', options: ['Нормы, правила, социальные установки обусловленные социальным, культурным развитием сообщества', 'Финансовые активы, драгоценные металлы находящиеся в распоряжении сообщества', 'Произведения искусства, архитектурные памятники, находящиеся на хранении в национальных музеях'], correct: 0, section: 'Основы социологии' },
+{ id: 2, type: 'single', question: 'Социальный конфликт это:', options: ['способ выражения и разрешения социальных противоречий между индивидуумами, группами и сообществами', 'конфликт работника и работодателя по вопросам оплаты труда', 'конфликт, возникший в результате исполнения гражданином требований органов власти'], correct: 0, section: 'Основы социологии' },
+{ id: 3, type: 'multi', question: 'Какие из суждений о социальных нормах являются верными?', options: ['Социальные нормы – установленные в обществе правила поведения, регулирующие отношения между людьми, общественную жизнь.', 'Социальные нормы являются одним из элементов социального контроля.', 'От других видов социальных норм обычаи отличаются тем, что в них всегда выражаются представления людей о хорошем и плохом, о добре и зле.', 'Любая организация может устанавливать нормы права.', 'Социальные нормы призваны способствовать интеграции индивида в социум.'], correct: [0, 1, 4], section: 'Основы социологии' },
+{ id: 4, type: 'multi', question: 'Социализация – это процесс усвоения культурных норм и освоение социальных ролей индивидом. Какие из вариантов Вы отнесете к функции социального контроля:', options: ['увольнение работника по инициативе администрации', 'оценку поступка ребенка взрослым человеком', 'государственная итоговая аттестация', 'критическую статью в газете'], correct: [0, 2, 3], section: 'Основы социологии' },
+{ id: 5, type: 'single', question: 'Место, которое конкретный индивид занимает в структуре социальной системы, называется:', options: ['социальным статусом', 'социальной ролью', 'социальным положением', 'диспозицией личности'], correct: 0, section: 'Основы социологии' },
+{ id: 6, type: 'single', question: 'Изменение положения индивида или группы в системе социальной стратификации называется:', options: ['профессиональным ростом', 'социальной мобильностью', 'возрастными изменениями'], correct: 1, section: 'Основы социологии' },
+{ id: 7, type: 'single', question: 'Стремление к обособлению, отделению части государства или отдельного этноса определяется понятием', options: ['сегрегация', 'апартеид', 'сепаратизм'], correct: 2, section: 'Основы социологии' },
+{ id: 8, type: 'single', question: 'Процесс соотнесения, отождествления индивида с культурой и традициями своего народа имеет название', options: ['национально-культурная идентификация', 'этническая идентификация', 'ресоциализация'], correct: 0, section: 'Основы социологии' },
+{ id: 9, type: 'single', question: 'Девиантное поведение в социологии определяется как:', options: ['отклонение от групповой нормы', 'подчинение общим правилам', 'изменение социального статуса'], correct: 0, section: 'Основы социологии' },
+{ id: 10, type: 'single', question: 'Процесс отказа от прежних ценностей, привычек, норм и правил поведения называется:', options: ['ресоциализация', 'десоциализация', 'адаптация', 'депривация'], correct: 1, section: 'Основы социологии' },
+{ id: 11, type: 'single', question: 'Формирование стабильных образцов социального взаимодействия на основе формализованных правил, законов, обычаев - это', options: ['Интеракция', 'Институционализация', 'Инвестиция', 'Инновация'], correct: 1, section: 'Основы социологии' },
+{ id: 12, type: 'single', question: 'Роль логопеда в процессе социализации ребёнка с речевыми нарушениями заключается в том, что он:', options: ['заменяет роль семьи в воспитании', 'способствует преодолению коммуникативных барьеров и интеграции ребёнка в социальную среду', 'определяет социальный статус ребёнка'], correct: 1, section: 'Основы социологии' },
+{ id: 13, type: 'multi', question: 'Выберите российские сервисы на основе ИИ:', options: ['ChatGPT', 'GigaChat', 'Алиса А1', 'Шедеврум', 'ЯндексGPT', 'Claude'], correct: [1, 2, 3, 4], section: 'Основы ИКТ' },
+{ id: 14, type: 'single', question: 'Режим предварительного просмотра служит для:', options: ['увеличения текста', 'просмотра документа перед печатью', 'вывода текста на печать'], correct: 1, section: 'Основы ИКТ' },
+{ id: 15, type: 'single', question: 'Что такое искусственный интеллект (ИИ)?', options: ['Способность машин выполнять задачи, требующие человеческого интеллекта', 'Компьютерная программа для обработки данных', 'Операционная система для серверов', 'Технология, имитирующая человеческий интеллект'], correct: 0, section: 'Основы ИКТ' },
+{ id: 16, type: 'single', question: 'Основным элементом электронной таблицы является', options: ['ячейка', 'строка', 'столбец', 'диапазон'], correct: 0, section: 'Основы ИКТ' },
+{ id: 17, type: 'single', question: 'В электронной таблице имя ячейки образуется', options: ['из имени столбца и строки', 'из имени столбца', 'из имени строки', 'из последовательности цифр'], correct: 0, section: 'Основы ИКТ' },
+{ id: 18, type: 'single', question: 'Информационно-образовательная среда организации согласно ФГОС включает:', options: ['комплекс информационных образовательных ресурсов и совокупность технологических средств ИКТ', 'комплекс ресурсов, средств ИКТ и систему методической поддержки педагогов', 'систему педагогических технологий'], correct: 0, section: 'Основы ИКТ' },
+{ id: 19, type: 'single', question: 'Электронные образовательные ресурсы (ЭОР) - это ...', options: ['учебные материалы, для воспроизведения которых используются электронные устройства', 'средства современных информационных технологий', 'современные средства связи'], correct: 0, section: 'Основы ИКТ' },
+{ id: 20, type: 'single', question: 'Чтобы войти в ящик электронной почты, нужно знать…', options: ['логин и пароль пользователя', 'пароль и имя почтового сервера', 'домен и имя пользователя'], correct: 0, section: 'Основы ИКТ' },
+{ id: 21, type: 'single', question: 'Поисковая система это', options: ['сайт для поиска информации на основе ключевых слов', 'программа тестирования', 'протокол передачи почты'], correct: 0, section: 'Основы ИКТ' },
+{ id: 22, type: 'single', question: 'Составная часть презентации, содержащая различные объекты, называется…', options: ['слайд', 'лист', 'кадр', 'рисунок'], correct: 0, section: 'Основы ИКТ' },
+{ id: 23, type: 'single', question: 'Что такое виртуальная реальность (VR)?', options: ['Технология, накладывающая слои на реальность', 'Мир, созданный с помощью технических средств, в который пользователь погружается', 'Объединение реального и виртуального миров'], correct: 1, section: 'Основы ИКТ' },
+{ id: 24, type: 'single', question: 'Служба хранения данных на удалённом сервере называется:', options: ['облачные технологии', 'облачное приложение', 'облачное хранилище'], correct: 2, section: 'Основы ИКТ' },
+{ id: 25, type: 'single', question: 'Согласно какому нормативному документу в ОО осуществляется профилактика и запрещение курения табака:', options: ['согласно ст. 41 ФЗ № 273 «Об образовании»', 'согласно профстандарту "Педагог"', 'согласно ст. 28 ФЗ 273 «Об образовании»'], correct: 0, section: 'Охрана труда' },
+{ id: 26, type: 'single', question: 'Какие средства относятся к первичным средствам пожаротушения?', options: ['извещатели', 'пожарные автомобили', 'огнетушители', 'устройства сигнализации'], correct: 2, section: 'Охрана труда' },
+{ id: 27, type: 'single', question: 'Все школьники распределяются на медицинские группы:', options: ['основную, подготовительную, специальную', 'слабую, среднюю, сильную', 'без отклонений, с отклонениями'], correct: 0, section: 'Охрана труда' },
+{ id: 28, type: 'single', question: 'Какое из мероприятий включено в перечень действий по оказанию первой помощи?', options: ['Отсутствие сознания', 'Остановка дыхания', 'Укусы ядовитых животных', 'Судорожный приступ', 'Острые психологические реакции на стресс', 'Все вышеперечисленное'], correct: 5, section: 'Охрана труда' },
+{ id: 29, type: 'single', question: 'Противодействие терроризму предусматривает уровень террористической угрозы:', options: ['Черный', 'Зеленый', 'Синий', 'Белый'], correct: 2, section: 'Охрана труда' },
+{ id: 30, type: 'single', question: 'Введение гражданской обороны начинается:', options: ['с объявления о мобилизации', 'с момента объявления ЧП', 'с момента объявления состояния войны или введения военного положения'], correct: 2, section: 'Охрана труда' },
+{ id: 31, type: 'single', question: 'Какие действия выполняются при желтом уровне террористической угрозы:', options: ['проверка информации о теракте', 'массовая проверка документов', 'усиление охраны объектов жизнеобеспечения', 'проведение тренировки'], correct: 2, section: 'Охрана труда' },
+{ id: 32, type: 'single', question: 'Здоровый образ жизни - это', options: ['двигательная активность', 'режим труда и отдыха', 'гармоничное душевное состояние', 'здоровое питание', 'все выше перечисленное'], correct: 4, section: 'Охрана труда' },
+{ id: 33, type: 'multi', question: 'Пострадавшего следует транспортировать своими силами, если:', options: ['нет надежды на быстрое прибытие медицинской помощи', 'нужно немедленно удалить из опасных для жизни условий', 'имеются обширные травмы', 'отсутствует сознание', 'имеется опасное кровотечение'], correct: [0, 1], section: 'Охрана труда' },
+{ id: 34, type: 'multi', question: 'При сигнале о красном уровне «Угроза атаки беспилотников» следует:', options: ['подойти к окнам', 'выбежать на улицу', 'если на улице – зайдите в ближайшее здание, паркинг, подземный переход', 'если дома – перейдите в помещение без окон; не пользуйтесь лифтом', 'оставайтесь в безопасном месте до отбоя'], correct: [2, 3, 4], section: 'Охрана труда' },
+{ id: 35, type: 'multi', question: 'В ОО проник вооруженный стрелок. Действия персонала:', options: ['обеспечить информирование оперативных служб и руководителя ОО', 'обеспечить информирование родителей', 'перевести средства связи в беззвучный режим', 'блокировать входы всеми доступными средствами'], correct: [0, 2, 3], section: 'Охрана труда' },
+{ id: 36, type: 'single', question: 'Вводный противопожарный инструктаж проводится с работниками:', options: ['прибывшими в ОО на обучение или практику', 'в случае нарушения правил пожарной безопасности', 'при неудовлетворительном знании требований'], correct: 0, section: 'Охрана труда' },
+{ id: 37, type: 'single', question: 'При ранении конечностей необходимо:', options: ['промыть рану водой', 'обработать спиртовым раствором', 'накрыть рану чистой салфеткой и прибинтовать', 'промыть рану и прибинтовать'], correct: 2, section: 'Охрана труда' },
+{ id: 38, type: 'single', question: 'Какие элементы включает здоровый образ жизни:', options: ['активный отдых; закаливание; раздельное питание', 'двигательный режим; закаливание; рациональное питание; гигиена; гармонизация', 'двигательный режим; молочное питание; гигиена'], correct: 1, section: 'Охрана труда' },
+{ id: 39, type: 'single', question: 'Согласно статье 41 ФЗ № 273 охрана здоровья включает:', options: ['оказание первичной медико-санитарной помощи', 'организацию питания', 'профилактику несчастных случаев', 'санитарно-противоэпидемические мероприятия', 'обучение навыкам первой помощи', 'все вышеперечисленное'], correct: 5, section: 'Охрана труда' },
+{ id: 40, type: 'single', question: 'Уход за пострадавшим до приезда скорой - это:', options: ['первая медицинская помощь', 'первая доврачебная помощь', 'доврачебная помощь', 'первая помощь'], correct: 3, section: 'Охрана труда' },
+{ id: 41, type: 'single', question: 'Кто должен сообщить о возгорании в школе:', options: ['директор', 'ответственный за пожарную безопасность', 'преподаватель рядом', 'любой работник, обнаруживший очаг'], correct: 3, section: 'Охрана труда' },
+{ id: 42, type: 'single', question: 'При нарушениях зрения опасно выполнение движений:', options: ['нагрузки высокой интенсивности', 'кувырки через голову', 'плавание', 'круговые движения туловища'], correct: 0, section: 'Охрана труда' },
+{ id: 43, type: 'single', question: 'При заболеваниях нервной системы не рекомендуется:', options: ['кувырки через голову', 'круговые движения головой и наклоны', 'упражнения на координацию'], correct: 0, section: 'Охрана труда' },
+{ id: 44, type: 'single', question: 'Ребенок с выраженной двусторонней тугоухостью:', options: ['освобождается от ФК на 1 год', 'освобождается от ФК на всё время', 'занимается в СМГ «А»', 'занимается в СМГ «Б»'], correct: 3, section: 'Охрана труда' },
+{ id: 45, type: 'single', question: 'При косоглазии без амблиопии и остроте зрения 1,0 учащиеся:', options: ['в СМГ «А»', 'в СМГ «Б»', 'в подготовительной группе', 'в основной группе'], correct: 3, section: 'Охрана труда' },
+{ id: 46, type: 'single', question: 'Продолжительные нагрузки средней интенсивности ограничиваются:', options: ['с заболеваниями ССС', 'при нарушениях осанки', 'при заболеваниях нервной системы', 'при любых хронических'], correct: 0, section: 'Охрана труда' },
+{ id: 47, type: 'fill', question: 'ФЗ-273 определяет образовательную программу как комплекс..., а также в виде рабочей _____ _____, календарного плана воспитательной работы', correct: 'программы воспитания', section: 'Методика воспитания' },
+{ id: 48, type: 'single', question: 'Сотрудничество классного руководителя с другими педагогами:', options: ['в образовательном процессе ОО', 'исключительно за пределами уроков', 'только во внеурочной деятельности'], correct: 0, section: 'Методика воспитания' },
+{ id: 49, type: 'multi', question: 'Рабочая программа воспитания НЕ включает разделы:', options: ['Нормативно-правовой', 'Целевой', 'Содержательный', 'Организационный', 'Аналитический'], correct: [0, 4], section: 'Методика воспитания' },
+{ id: 50, type: 'single', question: '… – активная жизненная позиция человека, выражающаяся в идейной принципиальности:', options: ['гражданская идентичность', 'социальная активность', 'волонтерство', 'наставничество'], correct: 1, section: 'Методика воспитания' },
+{ id: 51, type: 'multi', question: 'В разработке рабочих программ воспитания участвуют:', options: ['советы обучающихся', 'советы родителей', 'представительные органы обучающихся', 'педагогические советы'], correct: [0, 2, 3], section: 'Методика воспитания' },
+{ id: 52, type: 'single', question: 'К ключевым идеям воспитания гражданина относятся:', options: ['Базовые национальные ценности', 'Преемственность', 'Личностные результаты', 'Воспитание гражданина – общее дело', 'Воспитание в деятельности', 'Все ответы верны'], correct: 5, section: 'Методика воспитания' },
+{ id: 53, type: 'single', question: 'Создание условий для приспособления к жизни в социуме - это:', options: ['Социальное воспитание', 'Диссоциальное воспитание', 'Коррекционное воспитание', 'Семейное воспитание'], correct: 2, section: 'Методика воспитания' },
+{ id: 54, type: 'fill', question: 'В целях реализации плана внеурочной деятельности может предусматриваться использование ресурсов других организаций, в том числе в _____ _____.', correct: 'сетевой форме', section: 'Методика воспитания' },
+{ id: 55, type: 'fill', question: 'Самооценка рабочей программы воспитания основывается на: - динамике личностного развития, - наличии _____ _____ детей и взрослых.', correct: 'детско-взрослых общностей', section: 'Методика воспитания' },
+{ id: 56, type: 'fill', question: 'Воспитательная деятельность планируется на основе подходов: антропологического, культурно-исторического, системно-деятельностного, личностно-ориентированного и', correct: 'аксиологического', section: 'Методика воспитания' },
+{ id: 57, type: 'single', question: 'Методы воспитания - это:', options: ['Способы взаимодействия педагога и детей', 'Техника построения процесса', 'Формы организации активности', 'Наборы приемов'], correct: 0, section: 'Методика воспитания' },
+{ id: 58, type: 'single', question: 'Воспитание патриотической личности - это:', options: ['патриотическое воспитание', 'гражданское воспитание', 'духовно-нравственное', 'коллективное'], correct: 0, section: 'Методика воспитания' },
+{ id: 59, type: 'fill', question: 'Внеурочные занятия «Разговоры о важном» направлены на развитие _____ _____ обучающихся к своей родине.', correct: 'ценностного отношения', section: 'Методика воспитания' },
+{ id: 60, type: 'single', question: 'Знание теоретических концепций воспитания относится к:', options: ['Методологическому уровню', 'Методическому уровню', 'Теоретическому уровню', 'Технологическому уровню'], correct: 2, section: 'Методика воспитания' },
+{ id: 61, type: 'fill', question: 'Рабочие программы курсов внеурочной деятельности должны содержать указание на _____ проведения занятий.', correct: 'форму', section: 'Методика воспитания' },
+{ id: 62, type: 'multi', question: 'К факторам сохранения психологического здоровья относятся:', options: ['избегание стрессов', 'избегание дистрессов', 'самоорганизация труда', 'коммуникативная компетентность'], correct: [1, 2, 3], section: 'Психология' },
+{ id: 63, type: 'single', question: 'Сопереживание, вчувствование, стремление откликнуться на проблемы другого:', options: ['идентификация', 'эмпатия', 'рефлексия', 'эмоциональное состояние'], correct: 1, section: 'Психология' },
+{ id: 64, type: 'multi', question: 'Работа с одаренными детьми требует:', options: ['занятий по индивидуальному расписанию', 'малых размеров рабочих групп', 'воспитания лидерских качеств', 'подготовки к проф. деятельности'], correct: [0, 1, 2], section: 'Психология' },
+{ id: 65, type: 'single', question: 'Процесс усвоения социального опыта, норм, ценностей - это:', options: ['воспитание', 'развитие', 'социализация', 'образование'], correct: 2, section: 'Психология' },
+{ id: 66, type: 'single', question: 'Инновационный метод разрешения споров:', options: ['метод «школьной медиации»', 'диспут', 'дискуссия', 'круглый стол'], correct: 0, section: 'Психология' },
+{ id: 67, type: 'single', question: 'Обсуждение поведения человека в разгар конфликта является:', options: ['необходимой мерой', 'ошибкой', 'привычкой', 'ситуативной мерой'], correct: 1, section: 'Психология' },
+{ id: 68, type: 'multi', question: 'Методами разрешения конфликта являются:', options: ['беседа', 'убеждение', 'просьба', 'приказ'], correct: [0, 1, 2], section: 'Психология' },
+{ id: 69, type: 'single', question: 'Наиболее эффективно конфликты разрешаются на этапе:', options: ['возникновения', 'осознания', 'начала открытого взаимодействия', 'развития', 'разрешения'], correct: 0, section: 'Психология' },
+{ id: 70, type: 'multi', question: 'Условиями психологической безопасности являются:', options: ['соблюдение нормативов', 'соответствие программе развития', 'соблюдение этических норм', 'наличие охраны', 'психическое здоровье педагога'], correct: [0, 2, 4], section: 'Психология' },
+{ id: 71, type: 'single', question: 'Универсальной системой сбора информации о состоянии образовательной среды является:', options: ['наблюдение', 'диагностика', 'мониторинг', 'беседа'], correct: 2, section: 'Психология' },
+{ id: 72, type: 'single', question: 'Умение понимать эмоциональное состояние других относится к:', options: ['межличностной коммуникации', 'восприятия и понимания', 'межличностного взаимодействия', 'передачи информации'], correct: 1, section: 'Психология' },
+{ id: 73, type: 'single', question: 'Неудовлетворительный стиль управления в конфликте связан с:', options: ['ошибками в подборе кадров', 'ошибками в контроле', 'просчетами в планировании', 'нарушением этики', 'все ответы верны'], correct: 4, section: 'Психология' },
+{ id: 74, type: 'multi', question: 'Психотравмирующей ситуацией в образовательной среде является:', options: ['конфликты в среде педагогов', 'конфликты в среде родителей', 'несогласованность психолога и администрации', 'отсутствие кабинета', 'низкое обеспечение'], correct: [0, 1, 2], section: 'Психология' },
+{ id: 75, type: 'single', question: 'Система поступков, противоречащих нормам:', options: ['субкультура молодежи', 'толерантное отношение', 'девиантное поведение'], correct: 2, section: 'Психология' },
+{ id: 76, type: 'multi', question: 'Структурными компонентами учения являются:', options: ['аудиальный', 'мотивационный', 'операционный', 'контрольно-оценочный'], correct: [1, 2, 3], section: 'Психология' },
+{ id: 77, type: 'single', question: 'Состояние внутреннего благополучия личности - это:', options: ['психическое здоровье', 'психологическое здоровье', 'соц-психол. адаптированность', 'социализация'], correct: 1, section: 'Психология' },
+{ id: 78, type: 'multi', question: 'При контактах с родителями педагог должен:', options: ['укреплять авторитет родителей', 'строить общение на уважении', 'предъявлять претензии', 'соблюдать педагогический такт'], correct: [0, 1, 3], section: 'Психология' },
+{ id: 79, type: 'multi', question: 'К видам буллинга относится:', options: ['Несформированность родственных связей', 'Социальное исключение', 'Физическое насилие', 'Интернет-травля'], correct: [1, 2, 3], section: 'Психология' },
+{ id: 80, type: 'single', question: 'Площадь кабинета для коррекционно-развивающих занятий (СанПиН 1.2.3685-21):', options: ['10 м2', '15 м2', '20 м2'], correct: 1, section: 'СанПиН' },
+{ id: 81, type: 'single', question: 'Количество обучающихся с ОВЗ совместно с другими (СП 2.4.3648-20):', options: ['1 чел.', '2 чел.', '3 чел.'], correct: 2, section: 'СанПиН' },
+{ id: 82, type: 'single', question: 'Проведение закаливающих мероприятий (СП 2.4.3648-20):', options: ['со всеми на уроках ФК', 'по желанию родителей', 'с согласия родителей и учетом здоровья'], correct: 2, section: 'СанПиН' },
+{ id: 83, type: 'single', question: 'Отдельный зал для музыки и физкультуры предусматривается:', options: ['более 50 человек', 'более 100 человек', 'более 120 человек'], correct: 1, section: 'СанПиН' },
+{ id: 84, type: 'single', question: 'Для профилактики йододефицита используется (СанПиН 2.3/2.4.3590-20):', options: ['йодомарин', 'соль йодированная', 'йод'], correct: 1, section: 'СанПиН' },
+{ id: 85, type: 'single', question: 'Питание детей осуществляется посредством (СанПиН 2.3/2.4.3590-20):', options: ['основного и индивидуального меню', 'основного меню', 'основного, дополнительного и индивидуального меню'], correct: 0, section: 'СанПиН' },
+{ id: 86, type: 'single', question: 'Предельная наполняемость класса для детей с ТНР:', options: ['12 чел', '10 чел', '6 чел'], correct: 1, section: 'СанПиН' },
+{ id: 87, type: 'single', question: 'Обучение 1, 5, 9-11 классов и ОВЗ проводится:', options: ['в первую смену', 'в обе смены', 'во вторую смену'], correct: 0, section: 'СанПиН' },
+{ id: 88, type: 'single', question: 'Урочная деятельность обучающихся с ОВЗ организуется:', options: ['по 5-дневной неделе', 'по 6-дневной неделе'], correct: 0, section: 'СанПиН' },
+{ id: 89, type: 'single', question: 'Занятия коррекционной направленности составляют:', options: ['не менее 10 часов', 'не менее 5 часов', 'не менее 3 часов', 'не регламентируется'], correct: 1, section: 'СанПиН' },
+{ id: 90, type: 'single', question: 'В цокольном этаже не допускается наличие:', options: ['гардеробов', 'тира и книгохранилищ', 'обеденных и тренажерных залов', 'учебных кабинетов'], correct: 2, section: 'СанПиН' },
+{ id: 91, type: 'single', question: 'Основные вопросы экономики:', options: ['Что производится? Как? Кем?', 'Что потребляется? Как? Кто?', 'Что производится? Как? Кто?', 'Что потребляется? Как? Кто?'], correct: 0, section: 'Основы экономики' },
+{ id: 92, type: 'single', question: 'Какая ситуация отражает понятие денег как финансового инструмента?', options: ['Семья Ветровых хранит в сейфе', 'Семья Красновых планирует сбережения', 'Семья Лесновых покупает украшения', 'Семья Тулаевых ведёт бюджет'], correct: 1, section: 'Основы экономики' },
+{ id: 93, type: 'multi', question: 'Под налогом понимается:', options: ['Обязательный взнос за значимые действия', 'Обязательный безвозмездный платеж для финансового обеспечения', 'Платеж за наличный расчет', 'Нет правильного'], correct: [1], section: 'Основы экономики' },
+{ id: 94, type: 'single', question: 'Василиса вложила 100 тыс. На что гарантированно может рассчитывать?', options: ['На 125 тыс.', 'На возврат 100 тыс.', 'На сбережение от инфляции', 'Гарантированно — ни на что'], correct: 3, section: 'Основы экономики' },
+{ id: 95, type: 'multi', question: 'Какие приемы использовали мошенники?', options: ['Манипулирование', 'Нехватка информации', 'Спешка', 'Отвлечение внимания', 'Использование чужого имени'], correct: [0, 2, 3], section: 'Основы экономики' },
+{ id: 96, type: 'multi', question: 'Что в кредитном договоре должно вызвать подозрения?', options: ['Мелкий шрифт', 'Разные ставки', 'Кредитная карта как бонус', 'Ссылки на сторонние документы', 'Ограничение использования'], correct: [0, 1, 3], section: 'Основы экономики' },
+{ id: 97, type: 'single', question: 'Какое право Александра нарушено?', options: ['право на полную информацию', 'право самостоятельно решать', 'право на отказ', 'нарушений не было'], correct: 0, section: 'Основы экономики' },
+{ id: 98, type: 'multi', question: 'Физические лица имеют право на социальные вычеты, если производили расходы:', options: ['На лечение', 'На благотворительность', 'На обучение детей', 'Все варианты'], correct: [0, 1, 2], section: 'Основы экономики' },
+{ id: 99, type: 'single', question: 'Объектом налогообложения для налоговых резидентов признается:', options: ['доход от источников в РФ и за пределами', 'доход от источников в РФ', 'доход от источников за пределами', 'суммы налогов'], correct: 0, section: 'Основы экономики' },
+{ id: 100, type: 'single', question: 'Кто является налоговым резидентом РФ?', options: ['183 дня в календарном году', '183 дня в течение 12 месяцев', '187 дней в календарном году', '187 дней за 12 месяцев'], correct: 1, section: 'Основы экономики' },
+{ id: 101, type: 'single', question: 'Правовой акт, регулирующий социально-трудовые отношения:', options: ['трудовой договор', 'коллективный договор', 'двусторонний договор', 'трудовое соглашение'], correct: 1, section: 'Нормативно-правовое' },
+{ id: 102, type: 'single', question: 'Комиссия по урегулированию споров создается в целях:', options: ['урегулирования разногласий', 'контроля за педагогами', 'разрешения конфликтов с директором'], correct: 0, section: 'Нормативно-правовое' },
+{ id: 103, type: 'multi', question: 'Педагог, не прошедший медосмотр:', options: ['Может быть допущен', 'Должен быть отстранен', 'Может быть допущен медработником', 'Может при отсутствии хронических'], correct: [1], section: 'Нормативно-правовое' },
+{ id: 104, type: 'single', question: 'Ситуация личной заинтересованности педагога - это:', options: ['взятка', 'конфликт интересов', 'злоупотребление', 'предпринимательство'], correct: 1, section: 'Нормативно-правовое' },
+{ id: 105, type: 'single', question: 'За дисциплинарный проступок работодатель может применить:', options: ['перевод на нижеоплачиваемую', 'увольнение', 'лишение доплат', 'строгий выговор'], correct: 1, section: 'Нормативно-правовое' },
+{ id: 106, type: 'single', question: 'Психолого-педагогическая помощь оказывается на основании:', options: ['рекомендаций педсовета', 'заявления или согласия родителей', 'решения руководителя', 'решения психолога'], correct: 1, section: 'Нормативно-правовое' },
+{ id: 107, type: 'single', question: 'При приеме в ОО администрация должна ознакомить с:', options: ['должностными инструкциями', 'Уставом ОО', 'коллективным договором', 'правилами распорядка'], correct: 1, section: 'Нормативно-правовое' },
+{ id: 108, type: 'single', question: 'Срочный трудовой договор заключается:', options: ['с пенсионером', 'с заместителями', 'на время отсутствующего сотрудника', 'с совместителями'], correct: 2, section: 'Нормативно-правовое' },
+{ id: 109, type: 'single', question: 'Ответственность за ликвидацию академ. задолженности возлагается на:', options: ['родителей', 'ОО', 'педагогов', 'муниципальные органы'], correct: 0, section: 'Нормативно-правовое' },
+{ id: 110, type: 'single', question: 'Создание условий для доп. образования педагогов - компетенция:', options: ['ОО', 'педагога', 'профсоюза', 'учредителя'], correct: 0, section: 'Нормативно-правовое' },
+{ id: 111, type: 'multi', question: 'Формы получения образования вне организаций:', options: ['Экстернат', 'Самообразование', 'Семейная форма', 'Корпоративное'], correct: [1, 2], section: 'Нормативно-правовое' },
+{ id: 112, type: 'single', question: 'Привлечение несовершеннолетних к труду без согласия родителей:', options: ['запрещается', 'разрешается', 'запрещается, если не предусмотрено программой'], correct: 0, section: 'Нормативно-правовое' },
+{ id: 113, type: 'multi', question: 'В период длительного отпуска за педагогом сохраняется:', options: ['место работы', 'объем учебной нагрузки', 'средняя зарплата', 'стимулирующие'], correct: [0, 1], section: 'Нормативно-правовое' },
+{ id: 114, type: 'single', question: 'Порядок промежуточной аттестации относится к компетенции:', options: ['Правительства', 'органов субъектов', 'учредителя', 'ОО'], correct: 3, section: 'Нормативно-правовое' },
+{ id: 115, type: 'single', question: 'Совокупность прав, свобод, обязанностей - это:', options: ['Правовой статус педагога', 'Проф. уровень', 'Статус ОО', 'Правовой статус родителей'], correct: 0, section: 'Нормативно-правовое' },
+{ id: 116, type: 'single', question: 'Меры дисциплинарного взыскания не применяются к обучающимся:', options: ['дошкольного и начального общего, с ОВЗ', 'среднего общего', 'среднего профессионального'], correct: 0, section: 'Нормативно-правовое' },
+{ id: 117, type: 'single', question: 'К обучающимся могут быть применены:', options: ['устное замечание', 'замечание, выговор, отчисление', 'строгий выговор', 'доп. задания'], correct: 1, section: 'Нормативно-правовое' },
+{ id: 118, type: 'single', question: 'Методический день предоставляется:', options: ['по решению работодателя с учетом режима', 'по желанию работника', 'по решению коллегиальных органов', 'по решению профсоюза'], correct: 0, section: 'Нормативно-правовое' },
+{ id: 119, type: 'single', question: 'Обеспечение равного доступа к образованию - это:', options: ['профиль образования', 'адаптированная программа', 'инклюзивное образование', 'общее образование'], correct: 2, section: 'Нормативно-правовое' },
+{ id: 120, type: 'single', question: 'Лица, осваивающие образовательные программы:', options: ['учащиеся', 'слушатели', 'студенты'], correct: 0, section: 'Нормативно-правовое' },
+{ id: 121, type: 'single', question: 'Вид образования, направленный на развитие личности:', options: ['общее образование', 'профессиональное', 'дополнительное', 'неформальное'], correct: 0, section: 'Педагогика' },
+{ id: 122, type: 'single', question: 'Структурообразующий элемент учебного занятия:', options: ['учебно-познавательный мотив', 'учебная задача', 'познавательная цель', 'образовательный результат'], correct: 1, section: 'Педагогика' },
+{ id: 123, type: 'single', question: 'Системно-деятельностный подход связан с именами:', options: ['Коменского, Бэкона, Занкова', 'Выготского, Давыдова, Эльконина', 'Краевского, Лернера, Скаткина', 'Макаренко, Ушинского'], correct: 1, section: 'Педагогика' },
+{ id: 124, type: 'single', question: 'Целенаправленное взаимодействие педагогов и воспитанников:', options: ['Педагогическая ситуация', 'Мониторинг', 'Педагогический процесс', 'Педагогическое взаимодействие'], correct: 3, section: 'Педагогика' },
+{ id: 125, type: 'single', question: 'Содержание в виде системы учебных задач:', options: ['предметное', 'деятельностное', 'метапредметное', 'личностное'], correct: 1, section: 'Педагогика' },
+{ id: 126, type: 'single', question: 'Основные требования к организации деятельности:', options: ['Обучение', 'Педагогический принцип', 'Движущая сила', 'Структура'], correct: 1, section: 'Педагогика' },
+{ id: 127, type: 'single', question: 'Единство теоретической и практической готовности:', options: ['Педагогическая компетентность', 'Аналитическое умение', 'Инновационная деятельность', 'Методы'], correct: 0, section: 'Педагогика' },
+{ id: 128, type: 'single', question: '«Отец русских учителей»:', options: ['Макаренко', 'Сухомлинский', 'Ушинский', 'Пирогов'], correct: 2, section: 'Педагогика' },
+{ id: 129, type: 'single', question: 'Способы взаимодействия педагога и учащихся:', options: ['Метод обучения', 'Контроль', 'Планирование', 'Общение'], correct: 0, section: 'Педагогика' },
+{ id: 130, type: 'single', question: 'Метод, не характерный для пед. исследования:', options: ['Наблюдение', 'Беседа', 'Эмпатия', 'Тестирование'], correct: 2, section: 'Педагогика' },
+{ id: 131, type: 'single', question: 'Соблюдение меры в общении с детьми:', options: ['Педагогическая задача', 'Педагогический такт', 'Инновация', 'Технология'], correct: 1, section: 'Педагогика' },
+{ id: 132, type: 'single', question: 'Верны ли суждения? А. Не рекомендуется употреблять плодоовощные культуры вблизи дорог. Б. Овощи с избытком удобрений безопасны.', options: ['верно только А', 'верно только Б', 'верны оба', 'оба неверны'], correct: 0, section: 'Основы экологии' },
+{ id: 133, type: 'single', question: 'Основная причина уменьшения биоразнообразия:', options: ['охота', 'сбор трав', 'изменение местообитаний', 'использование в пищу'], correct: 2, section: 'Основы экологии' },
+{ id: 134, type: 'single', question: 'Сфера взаимодействия общества и природы:', options: ['биосфера', 'ноосфера', 'хемосфера', 'окружающая среда'], correct: 1, section: 'Основы экологии' },
+{ id: 135, type: 'single', question: 'Социальная экология изучает:', options: ['общество – окружающая среда', 'организм – среда', 'человек – среда', 'биоценоз - биотоп'], correct: 0, section: 'Основы экологии' },
+{ id: 136, type: 'single', question: 'Влияние загрязнения на среду изучает:', options: ['Селекция', 'Экология', 'Микробиология', 'Генетика'], correct: 1, section: 'Основы экологии' },
+{ id: 137, type: 'single', question: 'Определение экологии впервые:', options: ['Дарвин', 'Геккель', 'Вернадский', 'Тенсли'], correct: 1, section: 'Основы экологии' },
+{ id: 138, type: 'single', question: 'Учение о ноосфере сформулировал:', options: ['Вернадский', 'Одум', 'Коммонер', 'Реймерс'], correct: 0, section: 'Основы экологии' },
+{ id: 139, type: 'single', question: 'Верны ли утверждения? А. Достаточно изменить менталитет. Б. В соц. экологии знания о природе сочетаются с соц-эконом.', options: ['верно только А', 'верно только Б', 'верны оба', 'оба неверны'], correct: 1, section: 'Основы экологии' },
+{ id: 140, type: 'single', question: 'Глобальной экологической проблемой НЕ является:', options: ['продовольственная', 'энергетическая', 'демографическая', 'технологическая'], correct: 3, section: 'Основы экологии' },
+{ id: 141, type: 'single', question: 'Где и когда открыта первая школа для обучающихся с ТНР:', options: ['Москва, 1954', 'Ленинград, 1954', 'Москва, 1958'], correct: 0, section: 'История логопедии' },
+{ id: 142, type: 'single', question: 'Когда зарождается логопедия:', options: ['конец XIX – начало XX в.', '20-е гг. XX в.', '70-е гг. XIX в.'], correct: 0, section: 'История логопедии' },
+{ id: 143, type: 'multi', question: 'Проблемой этиологии нарушений речи занимались:', options: ['Гиппократ', 'Аристотель', 'П. Брока', 'М.Е. Хватцев', 'Г.В. Чиркина', 'В.И. Селиверстов'], correct: [0, 1, 2, 3], section: 'История логопедии' },
+{ id: 144, type: 'multi', question: 'Становление логопедии в России связано с:', options: ['Ф.И. Рау', 'М.Е. Хватцевым', 'Р.Е. Левиной', 'Г.А. Каше', 'Г.В. Чиркиной', 'А.В. Ястребовой'], correct: [1, 2, 3, 4, 5], section: 'История логопедии' },
+{ id: 145, type: 'single', question: 'Первая отечественная работа о заикании:', options: ['Олтушевский', 'Лагузен', 'Сикорский', 'Хватцев'], correct: 1, section: 'История логопедии' },
+{ id: 146, type: 'single', question: 'Второй этап становления логопедии (1950-е — конец 1970-х):', options: ['поиск педагогических основ', 'развитие комплексного подхода', 'совершенствование и оптимизация', 'накопление знаний'], correct: 2, section: 'История логопедии' },
+{ id: 147, type: 'single', question: 'Учащиеся с отклонениями в развитии речи делятся на:', options: ['5 подгрупп', '4 подгруппы', '3 подгруппы', '2 подгруппы'], correct: 3, section: 'Нормативно-правовое (логопедия)' },
+{ id: 148, type: 'single', question: 'Кинестетический анализ артикуляторных движений осуществляется в:', options: ['I блок', 'II блок', 'III блок'], correct: 1, section: 'Коррекционная педагогика' },
+{ id: 149, type: 'multi', question: 'Материально-техническое обеспечение ОУ включает:', options: ['архитектурную среду', 'спец. оборудование', 'отдельные помещения', 'наличие пандуса'], correct: [1, 2], section: 'Коррекционная педагогика' },
+{ id: 150, type: 'fill', question: 'Особая форма педагогической деятельности, направленная на создание благоприятных условий для помощи детям с нарушением развития называется…', correct: 'коррекционная педагогика', section: 'Коррекционная педагогика' },
+{ id: 151, type: 'single', question: 'Индикаторы качества инклюзивной среды М.В. Аллоди:', options: ['креативность', 'стимуляция к саморазвитию', 'развитие практик', 'все варианты'], correct: 3, section: 'Коррекционная педагогика' },
+{ id: 152, type: 'single', question: 'Дифференциация звуков необязательна при:', options: ['замене звука', 'отсутствии звука', 'искаженном произношении'], correct: 2, section: 'Коррекционная педагогика' },
+{ id: 153, type: 'multi', question: 'Умственная отсталость включает:', options: ['олигофрению', 'деменцию', 'ЗПР', 'СДВГ'], correct: [0, 1], section: 'Коррекционная педагогика' },
+{ id: 154, type: 'single', question: 'Форма дизартрии со скандированной речью:', options: ['подкорковая', 'корковая', 'бульбарная', 'мозжечковая'], correct: 3, section: 'Коррекционная педагогика' },
+{ id: 155, type: 'single', question: 'Оптимальный способ педагогической диагностики:', options: ['структурированное наблюдение', 'эксперимент', 'тестирование', 'лабораторное'], correct: 0, section: 'Коррекционная педагогика' },
+{ id: 156, type: 'multi', question: 'СДВГ характеризуется:', options: ['двигательной активностью', 'импульсивностью', 'дефицитом внимания', 'неадекватностью'], correct: [0, 1, 2], section: 'Коррекционная педагогика' },
+{ id: 157, type: 'multi', question: 'Особые потребности детей с ОВЗ:', options: ['использование специальных методов', 'индивидуализация обучения', 'особая организация среды', 'пошаговое обучение'], correct: [0, 1, 2], section: 'Коррекционная педагогика' },
+{ id: 158, type: 'single', question: 'Характерный признак развития детей с ЗПР:', options: ['тяжелые нарушения речи', 'неспособность к управлению поведением', 'нарушения эмоциональной сферы', 'глубокие отклонения мышления'], correct: 2, section: 'Коррекционная педагогика' },
+{ id: 159, type: 'single', question: 'Стойкие ошибки в орфографии - это:', options: ['дизорфографические', 'каллиграфические', 'орфографические'], correct: 0, section: 'Методика работы' },
+{ id: 160, type: 'single', question: 'Объединение слогов разных слов:', options: ['персеверация', 'антиципация', 'контаминация', 'аккомодация'], correct: 2, section: 'Методика работы' },
+{ id: 161, type: 'single', question: 'Задачи логопеда при ФФН:', options: ['формирование звуко-буквенного состава', 'исправление дефектов произношения', 'все ответы верны'], correct: 2, section: 'Методика работы' },
+{ id: 162, type: 'single', question: 'Типичный недостаток произношения:', options: ['звук «Р»', 'мягкое произношение шипящих', 'межзубное произношение', 'все ответы верны'], correct: 0, section: 'Методика работы' },
+{ id: 163, type: 'single', question: 'Фонетический принцип орфографии требует:', options: ['Вот моя собака.', 'Вот мой дом.', 'Вот мой парашют.'], correct: 2, section: 'Методика работы' },
+{ id: 164, type: 'multi', question: 'Специфические ошибки у детей с ФФН:', options: ['замена букв', 'пропуски букв', 'перестановки', 'вставка лишних слов', 'повторение рядов'], correct: [0, 1, 2], section: 'Методика работы' },
+{ id: 165, type: 'single', question: 'Специфические ошибки при фонематической дислексии:', options: ['изменение глаголов', 'замены сходных букв', 'нарушение звуко-слоговой структуры'], correct: 2, section: 'Методика работы' },
+{ id: 166, type: 'single', question: 'Программно-методическое обеспечение включает:', options: ['адаптированные программы', 'индивидуальные программы', 'учебно-методические материалы', 'программы соц. адаптации'], correct: 0, section: 'Методика работы' },
+{ id: 167, type: 'single', question: 'Вид дислексии, обусловленный недоразвитием грамматики:', options: ['аграмматическая', 'мнестическая', 'оптическая', 'семантическая'], correct: 0, section: 'Методика работы' },
+{ id: 168, type: 'single', question: 'Несоразмерность артикуляционных движений:', options: ['дисметрия', 'гиперкинез', 'асинергия', 'атаксия'], correct: 0, section: 'Методика работы' },
+{ id: 169, type: 'single', question: 'Логопедический пункт комплектуется на основании:', options: ['выписки ПМПК и заявления', 'заключения логопеда', 'заключения ЛОРа', 'нормативов'], correct: 0, section: 'Методика работы' },
+{ id: 170, type: 'single', question: 'Определение наличия звука позволяет перейти к:', options: ['анализу обратных слогов', 'определению места звука', 'выделению гласных и согласных', 'отбору картинок'], correct: 1, section: 'Методика работы' },
+{ id: 171, type: 'single', question: 'Нарушение понимания при правильном чтении:', options: ['аграмматическая', 'мнестическая', 'оптическая', 'семантическая'], correct: 3, section: 'Методика работы' },
+{ id: 172, type: 'single', question: 'Мягкое небо вибрирует при ротацизме:', options: ['одноударный', 'велярный', 'увулярный', 'нет верного'], correct: 1, section: 'Методика работы' },
+{ id: 173, type: 'single', question: 'Практические методы логопедии:', options: ['игры, упражнения, моделирование', 'наблюдение', 'рассказ, беседа', 'все ответы верны'], correct: 0, section: 'Методика работы' },
+{ id: 174, type: 'single', question: 'Продолжительность коррекции при ФФН:', options: ['3 месяца', '4 месяца', 'от полугодия до года'], correct: 2, section: 'Методика работы' },
+{ id: 175, type: 'multi', question: 'У детей с ринолалией выявляется:', options: ['укороченная уздечка', 'укороченное твердое небо', 'укороченное мягкое небо', 'расщепление твердого неба', 'расщепление мягкого неба'], correct: [3, 4], section: 'Методика работы' },
+{ id: 176, type: 'multi', question: 'При тяжелой дизартрии отрабатываются:', options: ['приближенное произношение', 'фонематическое восприятие', 'навыки общения', 'выразительная речь'], correct: [0, 2], section: 'Методика работы' },
+{ id: 177, type: 'multi', question: 'Восполнение пробелов в психологических предпосылках включает:', options: ['развитие внимания', 'пространственных ориентировок', 'наблюдательности', 'зрительного восприятия', 'навыков письма'], correct: [0, 1, 2, 3], section: 'Методика работы' },
+{ id: 178, type: 'single', question: 'Исключить лишнее. Работа над лексико-грамматикой включает:', options: ['уточнение значения слов', 'словообразование', 'синтаксические конструкции', 'коррекцию звукопроизношения'], correct: 3, section: 'Методика работы' },
+{ id: 179, type: 'multi', question: 'У детей с ОНР 3 уровня нарушена связная речь:', options: ['нарушение связности', 'трудности воспроизведения', 'пересверации', 'смысловые пропуски', 'фрагментарность'], correct: [0, 3, 4], section: 'Методика работы' },
+{ id: 180, type: 'single', question: 'Исключить неверный. При контактах с родителями логопед должен:', options: ['разъяснять проблемы', 'консультировать', 'предъявлять претензии', 'убеждать и рекомендовать'], correct: 2, section: 'Методика работы' },
+{ id: 181, type: 'single', question: 'Несформированность фонематических представлений:', options: ['Настоле стояла ваза срозами.', 'На столе стояла васа с росами.', 'На этолезтоялаваза э розами.'], correct: 2, section: 'Методика работы' },
+{ id: 182, type: 'single', question: 'Процесс коррекции речевых нарушений:', options: ['логопедическое воздействие', 'компенсация', 'логопедическая коррекция'], correct: 0, section: 'Методика работы' },
+{ id: 183, type: 'single', question: 'Трудности при дизартрии проявляются:', options: ['в лексико-грамматическом структурировании', 'в семантической организации', 'в восприятии речи', 'в несформированности внешнего оформления'], correct: 3, section: 'Методика работы' },
+{ id: 184, type: 'single', question: 'Наиболее доступная речь для заикающихся:', options: ['повествовательная', 'отраженная', 'ситуативная', 'диалогическая', 'монологическая'], correct: 1, section: 'Методика работы' },
+{ id: 185, type: 'single', question: 'Искажение структуры слова при:', options: ['оптической', 'аграмматической', 'на почве нарушения языкового анализа'], correct: 2, section: 'Методика работы' },
+{ id: 186, type: 'multi', question: 'Задания I уровня (дифференциация звуков и букв):', options: ['выпиши из словаря слова', 'добавь в предложение слово', 'составь 6-8 слов', 'выпиши слова в 3 столбика'], correct: [0, 3], section: 'Методика работы' },
+{ id: 187, type: 'single', question: 'Роль родителей обучающихся с ОВЗ:', options: ['защищать права', 'выбирать формы обучения', 'получать информацию', 'знакомиться с содержанием', 'все ответы верны'], correct: 4, section: 'Методика работы' },
+{ id: 188, type: 'single', question: 'Замены по акустическому сходству при первичном нарушении:', options: ['арт.-фонетическая', 'арт.-фонематическая', 'акустико-фонематическая', 'смешанная'], correct: 2, section: 'Методика работы' },
+{ id: 189, type: 'single', question: 'Вид неправильного произношения «ш»:', options: ['межзубный сигматизм', 'боковой', 'щечный', 'шипящий парасигматизм', 'все ответы верны'], correct: 4, section: 'Методика работы' },
+{ id: 190, type: 'single', question: '«Механическое чтение»:', options: ['семантическая дислексия', 'аграмматическая', 'фонематическая', 'тактильная'], correct: 0, section: 'Методика работы' },
+{ id: 191, type: 'single', question: 'Психогенная форма заикания:', options: ['неврозоподобная', 'невротическая', 'органическая'], correct: 1, section: 'Методика работы' },
+{ id: 192, type: 'single', question: 'Нарушение фонематического принципа письма:', options: ['смешения по акустико-артикуляционному сходству', 'безударная гласная', 'удвоенные согласные', 'заглавная буква'], correct: 0, section: 'Методика работы' },
+{ id: 193, type: 'single', question: 'Перешифровка графемы в кинему:', options: ['письма', 'чтения', 'диалога', 'слушания'], correct: 0, section: 'Методика работы' },
+{ id: 194, type: 'multi', question: 'Требования к коррекционным занятиям:', options: ['учет зоны ближайшего развития', 'проблемное обучение', 'нарастание сложности', 'поэтапное формирование'], correct: [0, 2, 3], section: 'Методика работы' },
+{ id: 195, type: 'single', question: 'Зеркальное написание букв - это:', options: ['зрительно-моторные', 'зрительно-пространственные', 'кинетического запуска', 'моторные'], correct: 1, section: 'Методика работы' },
+{ id: 196, type: 'single', question: 'Направления работы при аграмматической дисграфии:', options: ['морфемный анализ и синтез', 'звуко-буквенные связи', 'дифференциация букв', 'мануальный праксис'], correct: 0, section: 'Методика работы' },
+{ id: 197, type: 'multi', question: 'Упражнения для смысловой догадки:', options: ['узнавание звуко-буквенного образа', 'восприятие словосочетаний', 'восприятие предложений'], correct: [1, 2], section: 'Методика работы' },
+{ id: 198, type: 'fill', question: 'Коррекционные занятия I этапа планируются в соответствии с методом устного', correct: 'опережения', section: 'Методика работы' },
+{ id: 199, type: 'single', question: 'Нарушения экспрессивной речи у детей с ЗПР:', options: ['нарушения звукопроизношения', 'бедность словаря', 'недостаточная сформированность грамматики', 'речевая инактивность', 'все ответы верны'], correct: 4, section: 'Методика работы' },
+{ id: 200, type: 'multi', question: 'В каникулярное время логопед привлекается к:', options: ['выявлению детей', 'участию в семинарах', 'подготовке материала', 'коррекционным занятиям'], correct: [0, 1, 2], section: 'Методика работы' },
+{ id: 201, type: 'single', question: 'Нарушения структурно-семантического оформления высказывания:', options: ['алалией и брадилалией', 'брадилалией и афазией', 'афазией и дислалией', 'алалией и афазией', 'дислалией и тахилалией', 'тахилалией и алалией'], correct: 3, section: 'Методика работы' },
+{ id: 202, type: 'single', question: 'Целенаправленный процесс передачи информации:', options: ['коммуникация', 'коммуникативная компетентность', 'неформальное общение'], correct: 0, section: 'Методика работы' },
+{ id: 203, type: 'multi', question: 'Причины постоянного переспрашивания:', options: ['низкий объем внимания', 'низкий уровень кратковременной памяти', 'слабое развитие произвольности', 'преобладание игровой мотивации'], correct: [0, 1, 2], section: 'Методика работы' },
+{ id: 204, type: 'multi', question: 'Причины плохой ориентировки в тетради:', options: ['низкий уровень восприятия', 'низкий уровень ориентировки в пространстве', 'слабое развитие моторики', 'тревожность'], correct: [0, 1], section: 'Методика работы' },
+{ id: 205, type: 'multi', question: 'Причины неусидчивости:', options: ['низкий уровень произвольности', 'низкий уровень образного мышления', 'слабое развитие моторики', 'преобладание игровой мотивации'], correct: [0, 3], section: 'Методика работы' },
+{ id: 206, type: 'multi', question: 'Причины затруднений при пересказе:', options: ['низкий объем памяти', 'низкий уровень образного мышления', 'низкий уровень логических операций', 'преобладание игровой мотивации'], correct: [0, 1, 2], section: 'Методика работы' },
+{ id: 207, type: 'single', question: 'Серёжа при ошибке бросает тетрадь. Как реагировать?', options: ['выгнать из класса', 'провести беседу с родителями', 'успокоить, показать веру в силы', 'проконсультироваться с психологом'], correct: 3, section: 'Методика работы' },
+{ id: 208, type: 'multi', question: 'Типичные ошибки при письме строчной буквы:', options: ['нарушение формы и пропуски овалов', 'далеко отходит второй элемент', 'неодинаковое расстояние'], correct: [0, 1], section: 'Методика работы' },
+{ id: 209, type: 'multi', question: 'Причины пропуска букв:', options: ['низкий уровень фонематического слуха', 'слабая концентрация внимания', 'несформированность самоконтроля', 'низкий уровень памяти'], correct: [0, 1, 2], section: 'Методика работы' },
+{ id: 210, type: 'single', question: 'Коммуникативный подход предполагает:', options: ['введение в речевую ситуацию', 'ориентироваться в ситуации', 'представлять собеседника', 'формулировать условия общения', 'все ответы верны'], correct: 4, section: 'Методика работы' },
+{ id: 211, type: 'single', question: 'Установить правильную последовательность развития навыков пользования самостоятельной речью у заикающихся детей — 1 этап:', options: ['простая ситуативная речь', 'сложная ситуативная речь', 'контекстная речь и закрепление навыков ситуативной речи', 'повествовательная речь'], correct: 0, section: 'Методика работы' },
+{ id: 212, type: 'single', question: 'При какой форме дисграфии отмечаются искажения структуры слова и предложения:', options: ['оптическая', 'аграмматическая', 'дисграфия на почве нарушения языкового анализа и синтеза'], correct: 2, section: 'Методика работы' },
+{ id: 213, type: 'multi', question: 'Какие виды заданий I уровня сложности (дифференциация оппозиционных звуков и букв) предлагаются младшим школьникам (по методическим материалам А.В. Ястребовой, Т.П. Бессоновой):', options: ['выпиши в течение 5 минут из орфографического словаря по 3 слова с заданными буквами', 'прочитай внимательно предложения с пропущенными словами; добавь в каждое предложение недостающее слово с изучаемым звуком', 'из десяти букв составь 6-8 слов, начинающихся с заданной буквы', 'послушай предложения, выпиши из них слова в 3 столбика с заданными звуками'], correct: [0, 3], section: 'Методика работы' },
+{ id: 214, type: 'multi', question: 'Установить соответствие заданий по восполнению пробелов в развитии лексико-грамматических средств языка (однокоренные слова) — I уровень сложности:', options: ['подбери родственные слова так, чтобы три слова были с безударной гласной в корне и три слова – проверочные', 'прочитай слова и запиши их в 3 столбика, дифференцируя положение корня в разных частях слова', 'подбери по 5 слов с корнем в начале слова, в середине, в конце'], correct: [0], section: 'Методика работы' },
+{ id: 215, type: 'single', question: 'Определите форму дислалии, если у ребенка звукопроизносительные дефекты проявляются в заменах и смешениях звуков по акустическому сходству, обусловленных первичным нарушением формирования фонематического восприятия и дифференциации звуков:', options: ['артикуляторно-фонетическая дислалия', 'артикуляторно-фонематическая дислалия', 'акустико-фонематическая дислалия', 'смешанная функциональная дислалия'], correct: 2, section: 'Методика работы' },
+{ id: 216, type: 'single', question: 'Определите вид неправильного произношения звука «ш»:', options: ['межзубный сигматизм', 'боковой сигматизм', 'щечный сигматизм', 'шипящий парасигматизм', 'все ответы верны'], correct: 4, section: 'Методика работы' },
+{ id: 217, type: 'single', question: 'Установить последовательность формирования у учащихся навыков работы с текстом — I этап:', options: ['установление смысловой зависимости', 'формирование практических представлений о тексте', 'определение последовательности и связности предложений в тексте', 'формирование навыка составлять текст'], correct: 1, section: 'Методика работы' },
+{ id: 218, type: 'single', question: 'Какое нарушение чтения называют «механическим чтением»?', options: ['семантическая дислексия', 'аграмматическая дислексия', 'фонематическая дислексия', 'тактильная дислексия'], correct: 0, section: 'Методика работы' },
+{ id: 219, type: 'multi', question: 'Установить соответствие заданий по восполнению пробелов в развитии лексико-грамматических средств языка (дифференциация предлогов и приставок) — I уровень сложности:', options: ['из данных слов составь предложения, используя предлог, запиши их', 'запиши предложения, выдели приставки предлоги', 'запиши предложения, выдели приставки предлоги разными цветами'], correct: [0], section: 'Методика работы' },
+{ id: 220, type: 'single', question: 'Какая форма заикания вызывается психогенными причинами (психотравмами):', options: ['неврозоподобная', 'невротическая', 'органическая'], correct: 1, section: 'Методика работы' },
+{ id: 221, type: 'single', question: 'Установить правильную последовательность этапов формирования речи детей с нарушениями слуха (по Л.Н. Носковой) — I этап:', options: ['глобальное восприятие речи', 'углубление анализа речи при восприятии и воспроизведении', 'переход к анализу речевого материала'], correct: 0, section: 'Методика работы' },
+{ id: 222, type: 'single', question: 'Укажите ошибки, связанные с нарушением фонематического принципа письма:', options: ['смешения и замены букв, обусловленные акустико-артикуляционным сходством звуков (твердых и мягких согласных, отражающихся в смешениях гласных букв (по вертикали) между собой)', 'ошибки написания безударной гласной', 'ошибки написания удвоенных согласных в слове', 'отсутствие заглавной буквы в именах собственных'], correct: 0, section: 'Методика работы' },
+{ id: 223, type: 'single', question: 'Установить соответствие заданий по совершенствованию речевого развития (простые предложения) — I уровень сложности:', options: ['Прочитай предложения, посчитай, сколько слов в каждом предложении; последовательно сокращай данные предложения до 5, 4, 3, 2 слов', 'Сократи первые 2 составленных тобой предложения до 3 слов, последующие 2 предложения до 4 слов', 'Прочитай предложения, подумай, какие можно сократить до 2 слов, какие – нельзя'], correct: 2, section: 'Методика работы' },
+{ id: 224, type: 'single', question: 'Перешифровка графемы в кинему является операцией:', options: ['письма', 'чтения', 'диалога', 'слушания'], correct: 0, section: 'Методика работы' },
+{ id: 225, type: 'multi', question: 'Требования к организации коррекционных занятий с детьми, имеющими речевые нарушения:', options: ['учет зоны ближайшего развития', 'проблемное обучение', 'индивидуальное нарастание степени сложности заданий', 'поэтапное формирование действий'], correct: [0, 2, 3], section: 'Методика работы' },
+{ id: 226, type: 'single', question: 'К какому типу ошибок письма относится зеркальное написание букв:', options: ['зрительно-моторные ошибки', 'зрительно-пространственные ошибки', 'ошибки кинетического запуска', 'моторные ошибки'], correct: 1, section: 'Методика работы' },
+{ id: 227, type: 'single', question: 'Направлениями логопедической работы в школе при коррекции аграмматической дисграфии и дислексии являются:', options: ['формирование навыков морфемного анализа и синтеза слов', 'закрепление звуко-буквенных связей', 'дифференциация оптически сходных букв', 'коррекция мануального праксиса'], correct: 0, section: 'Методика работы' },
+{ id: 228, type: 'multi', question: 'К числу упражнений, направленных на формирование смысловой догадки в процессе чтения и письма, относятся:', options: ['узнавание знакомого звуко-буквенного образа слова', 'умение воспринимать словосочетания', 'умение воспринимать предложения'], correct: [1, 2], section: 'Методика работы' },
+{ id: 229, type: 'fill', question: 'Коррекционные занятия I этапа с младшими школьниками планируются в соответствии с методом устного', correct: 'опережения', section: 'Методика работы' },
+{ id: 230, type: 'single', question: 'Нарушения экспрессивной речи у детей с ЗПР характеризуются:', options: ['нарушениями звукопроизношения', 'бедностью словарного запаса', 'недостаточной сформированностью грамматического строя речи', 'речевой инактивностью', 'все ответы верны'], correct: 4, section: 'Методика работы' },
+{ id: 231, type: 'single', question: 'Согласно клинико-педагогической классификации нарушения структурно-семантического оформления высказывания представлены двумя видами:', options: ['алалией и брадилалией', 'брадилалией и афазией', 'афазией и дислалией', 'алалией и афазией', 'дислалией и тахилалией', 'тахилалией и алалией'], correct: 3, section: 'Методика работы' },
+{ id: 232, type: 'single', question: 'Целенаправленный процесс передачи информации, специфическая форма взаимодействия людей в процессах их познавательно-трудовой деятельности называется:', options: ['коммуникацией', 'коммуникативной компетентностью', 'неформальным общением'], correct: 0, section: 'Методика работы' },
+{ id: 233, type: 'multi', question: 'Причины постоянного переспрашивания детей:', options: ['низкий уровень объема внимания', 'низкий уровень развития кратковременной памяти', 'слабое развитие произвольности', 'преобладание игровой мотивации'], correct: [0, 1, 2], section: 'Методика работы' },
+{ id: 234, type: 'multi', question: 'Причины плохой ориентировки в тетради:', options: ['низкий уровень восприятия', 'низкий уровень развития ориентировки в пространстве', 'слабое развитие моторики', 'тревожность'], correct: [0, 1], section: 'Методика работы' },
+{ id: 235, type: 'multi', question: 'Причины неусидчивости:', options: ['низкий уровень произвольности', 'низкий уровень развития образного мышления', 'слабое развитие моторики', 'преобладание игровой мотивации'], correct: [0, 3], section: 'Методика работы' },
+{ id: 236, type: 'multi', question: 'Причины затруднений при пересказывании текста:', options: ['низкий объем памяти', 'низкий уровень развития образного мышления', 'низкий уровень развития логических операций', 'преобладание игровой мотивации'], correct: [0, 1, 2], section: 'Методика работы' },
+{ id: 237, type: 'single', question: 'При малейшей ошибке в работе Серёжа (9 лет) отказывается выполнять задание, кричит, что у него ничего не получается, может бросить тетрадь. Как следует реагировать педагогу?', options: ['выгнать из класса', 'провести беседу с родителями', 'успокоить, показать, что учитель верит в силы ученика', 'проконсультироваться с психологом по поводу коррекции навыков саморегуляции'], correct: 3, section: 'Методика работы' },
+{ id: 238, type: 'multi', question: 'Типичные ошибки при письме строчной буквы:', options: ['нарушение формы и пропуски овалов', 'далеко отходит второй элемент', 'неодинаковое расстояние между элементами'], correct: [0, 1], section: 'Методика работы' },
+{ id: 239, type: 'multi', question: 'Причины пропуска букв в словах:', options: ['низкий уровень фонематического слуха', 'слабая концентрация внимания', 'несформированность самоконтроля', 'низкий уровень кратковременной памяти'], correct: [0, 1, 2], section: 'Методика работы' },
+{ id: 240, type: 'single', question: 'Установить последовательность работы по коррекции замены графически сходных букв на письме — I этап:', options: ['объяснить различие', 'дать облегчающий запоминание мнемонический прием', 'рассмотреть образцы начертания смешиваемых букв', 'упражнять в списывании слов и текстов с пропущенными буквами', 'тренировать в чередующейся записи букв цветными карандашами'], correct: 0, section: 'Методика работы' },
+{ id: 241, type: 'single', question: 'Коммуникативный подход к работе по развитию речи младших школьников предполагает:', options: ['введение учащегося в речевую ситуацию', 'формирование умения ориентироваться в ситуации', 'формирование умения представлять себе собеседника', 'формулировку условий речи и задач общения', 'все ответы верны'], correct: 4, section: 'Методика работы' },
+{ id: 242, type: 'single', question: 'Установить последовательность стадий педагогического общения — I этап:', options: ['Моделирование общения', 'Организация общения', 'Управление общением', 'Анализ осуществленного общения'], correct: 0, section: 'Методика работы' },
+{ id: 243, type: 'single', question: 'Поставить в соответствие образовательному подходу — Проектный:', options: ['предполагает развитие личности учащегося на основе системы универсальных способов деятельности', 'предполагает идеальное конструирование и практическую реализацию, а также рефлексивное соотнесение замысла и последствий', 'предполагает формирование социально значимых компетентностей и концентрацию на основных ценностях социальных групп', 'предполагает моделирование педагогических условий актуализации и развития опыта личности'], correct: 0, section: 'Методика работы' },
+{ id: 244, type: 'single', question: 'Поставить в соответствие образовательному подходу — Системно-деятельностный:', options: ['предполагает развитие личности учащегося на основе системы универсальных способов деятельности', 'предполагает идеальное конструирование и практическую реализацию, а также рефлексивное соотнесение замысла и последствий', 'предполагает формирование социально значимых компетентностей', 'предполагает моделирование педагогических условий актуализации опыта личности'], correct: 1, section: 'Методика работы' },
+{ id: 245, type: 'single', question: 'Расположить в правильной последовательности этапы структуры современного учебного занятия — I этап:', options: ['Этап мотивации', 'Этап актуализации', 'Этап постановки учебной задачи', 'Этап преобразования условия учебной задачи', 'Этап моделирования', 'Этап преобразования модели', 'Этап планирования решения учебной задачи', 'Этап отработки общего способа действий', 'Этап контроля', 'Этап самооценки'], correct: 0, section: 'Методика работы' },
+{ id: 246, type: 'single', question: 'Установить последовательность компонентов структуры учебной деятельности — I этап:', options: ['Познавательная потребность', 'Учебно-познавательный мотив', 'Учебная задача', 'Учебные действия', 'Действия контроля и оценки'], correct: 0, section: 'Методика работы' },
+{ id: 247, type: 'single', question: 'Установите последовательность ситуаций развития, направленных на освоение содержания и формы ведущей деятельности — I этап:', options: ['Дошкольно-игровая', 'Дошкольно-учебная', 'Игровая', 'Учебная', 'Учебно-проектная', 'Учебно-профессиональная'], correct: 0, section: 'Методика работы' },
+{ id: 248, type: 'single', question: 'Установить последовательность стадий инновационного процесса — I этап:', options: ['Выявление потребности в изменениях субъектов образовательного процесса', 'Выявление необходимости изменений на участках образовательного процесса', 'Разработка способов решения проблем (проектирование новшества)', 'Внедрение и распространение новшества', 'Перевод новшества в режим постоянного использования'], correct: 0, section: 'Методика работы' },
+{ id: 249, type: 'single', question: 'Расположите этапы овладения педагогическим умением в последовательности — I этап:', options: ['Знание о способе действия, теоретическое освоение', 'Осознанное выполнение действия по образцу', 'Автоматизированное выполнение, формирование навыка', 'Творческое применение умения в нестандартных ситуациях'], correct: 0, section: 'Методика работы' },
+{ id: 250, type: 'single', question: 'Установить соответствие между этапами становления отечественной логопедии — II этап (1950-е — конец 1970-х гг.):', options: ['Развитие комплексного медико-психолого-педагогического подхода к изучению и преодолению речевых расстройств', 'Совершенствование психолого-педагогических основ логопедии, оптимизация коррекционного обучения, развитие интегративных подходов', 'Поиск и становление педагогических основ логопедии'], correct: 1, section: 'Методика работы' },
+{ id: 251, type: 'single', question: 'Установить соответствие между этапами становления отечественной логопедии — III этап (конец 1970-х — настоящее время):', options: ['Развитие комплексного медико-психолого-педагогического подхода', 'Совершенствование психолого-педагогических основ логопедии, оптимизация коррекционного обучения', 'Поиск и становление педагогических основ логопедии; преодоление одностороннего медицинского подхода'], correct: 2, section: 'Методика работы' }
+];
+
+// ============================================================
+// СПИСОК БЛОКОВ (РАЗДЕЛОВ)
+// ============================================================
+const BLOCKS = [
+{ name: 'Основы социологии', icon: '👥' },
+{ name: 'Основы ИКТ', icon: '💻' },
+{ name: 'Охрана труда', icon: '🚨' },
+{ name: 'Методика воспитания', icon: '🎓' },
+{ name: 'Психология', icon: '🧠' },
+{ name: 'СанПиН', icon: '🏫' },
+{ name: 'Основы экономики', icon: '💰' },
+{ name: 'Нормативно-правовое', icon: '⚖️' },
+{ name: 'Педагогика', icon: '📖' },
+{ name: 'Основы экологии', icon: '🌿' },
+{ name: 'История логопедии', icon: '📜' },
+{ name: 'Нормативно-правовое (логопедия)', icon: '📋' },
+{ name: 'Коррекционная педагогика', icon: '🩺' },
+{ name: 'Методика работы', icon: '✏️' }
+];
+
+// ============================================================
+// СОСТОЯНИЕ ПРИЛОЖЕНИЯ
+// ============================================================
+let state = {
+mode: 'classic',
+selectedBlock: null,
+questions: [],
+currentIndex: 0,
+score: 0,
+totalQuestions: 20,
+answered: false,
+selectedAnswers: [],
+streak: 0,
+maxStreak: 0,
+marathonScore: 0,
+marathonCorrect: 0,
+marathonAnswered: 0,
+isFinished: false,
+history: [],
+reviewMode: false,
+reviewIndex: 0,
+highlightedOption: -1,
+questionStatus: [],
+userAnswers: {},
+username: 'Гость',
+profile: null
+};
+
+const letters = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ж', 'З', 'И', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф'];
+const PROFILES_KEY = 'logoped_profiles';
+const LEADERBOARD_KEY = 'logoped_leaderboard';
+const AVATAR_COLORS = ['#3949ab', '#2e7d32', '#c62828', '#f57f17', '#6a1b9a', '#00838f', '#ad1457', '#1565c0'];
+
+// ============================================================
+// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+// ============================================================
+function getAvatarColor(name) {
+let hash = 0;
+for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+}
+
+function getAvatarLetter(name) { 
+return name.charAt(0).toUpperCase(); 
+}
+
+function getProfiles() { 
+try { return JSON.parse(localStorage.getItem(PROFILES_KEY)) || {}; } catch { return {}; } 
+}
+
+function saveProfiles(p) { 
+localStorage.setItem(PROFILES_KEY, JSON.stringify(p)); 
+}
+
+function getOrCreateProfile(name) {
+const profiles = getProfiles();
+if (!profiles[name]) {
+profiles[name] = { 
+name, gamesPlayed: 0, totalCorrect: 0, totalQuestions: 0, 
+bestScore: 0, bestPercent: 0, createdAt: new Date().toISOString() 
+};
+saveProfiles(profiles);
+}
+return profiles[name];
+}
+
+function updateProfile(name, gameResult) {
+const profiles = getProfiles();
+if (!profiles[name]) {
+profiles[name] = { 
+name, gamesPlayed: 0, totalCorrect: 0, totalQuestions: 0, 
+bestScore: 0, bestPercent: 0, createdAt: new Date().toISOString() 
+};
+}
+const p = profiles[name];
+p.gamesPlayed += 1;
+p.totalCorrect += gameResult.correct;
+p.totalQuestions += gameResult.total;
+const percent = gameResult.total > 0 ? Math.round((gameResult.correct / gameResult.total) * 100) : 0;
+if (gameResult.correct > p.bestScore) p.bestScore = gameResult.correct;
+if (percent > p.bestPercent) p.bestPercent = percent;
+saveProfiles(profiles);
+return p;
+}
+
+function getLeaderboard() { 
+try { return JSON.parse(localStorage.getItem(LEADERBOARD_KEY)) || []; } catch { return []; } 
+}
+
+function saveLeaderboard(b) { 
+localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(b)); 
+}
+
+function updateLeaderboard(name) {
+const profiles = getProfiles();
+const board = getLeaderboard();
+const filtered = board.filter(item => item.name !== name);
+if (profiles[name]) {
+const p = profiles[name];
+const avgPercent = p.totalQuestions > 0 ? Math.round((p.totalCorrect / p.totalQuestions) * 100) : 0;
+filtered.push({ 
+name, gamesPlayed: p.gamesPlayed, totalCorrect: p.totalCorrect, 
+totalQuestions: p.totalQuestions, avgPercent, bestScore: p.bestScore, bestPercent: p.bestPercent 
+});
+}
+filtered.sort((a, b) => b.bestScore - a.bestScore || b.avgPercent - a.avgPercent);
+saveLeaderboard(filtered);
+return filtered;
+}
+
+function shuffle(array) {
+for (let i = array.length - 1; i > 0; i--) {
+const j = Math.floor(Math.random() * (i + 1));
+[array[i], array[j]] = [array[j], array[i]];
+}
+return array;
+}
+
+function getRandomQuestions(count = 20) { 
+return shuffle([...ALL_QUESTIONS]).slice(0, count); 
+}
+
+function getQuestionsByBlock(blockName) { 
+return ALL_QUESTIONS.filter(q => q.section === blockName); 
+}
+
+function getTypeLabel(type) {
+if (type === 'single') return 'Один ответ';
+if (type === 'multi') return 'Несколько ответов';
+if (type === 'fill') return 'Вставка слова';
+return type;
+}
+
+function getTypeIcon(type) {
+if (type === 'single') return '◉';
+if (type === 'multi') return '☑';
+if (type === 'fill') return '✎';
+return '•';
+}
+
+function showConfetti() {
+const container = document.createElement('div');
+container.className = 'confetti-container';
+const colors = ['#f44336', '#e91e63', '#9c27b0', '#3f51b5', '#4caf50', '#ff9800', '#ffeb3b', '#00bcd4'];
+for (let i = 0; i < 50; i++) {
+const el = document.createElement('div');
+el.className = 'confetti';
+el.style.left = Math.random() * 100 + '%';
+el.style.background = colors[Math.floor(Math.random() * colors.length)];
+el.style.width = (6 + Math.random() * 8) + 'px';
+el.style.height = (6 + Math.random() * 8) + 'px';
+el.style.animationDuration = (2 + Math.random() * 3) + 's';
+el.style.animationDelay = Math.random() * 1.5 + 's';
+el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+container.appendChild(el);
+}
+document.body.appendChild(container);
+setTimeout(() => container.remove(), 5000);
+}
+
+// ============================================================
+// КЛАВИАТУРА
+// ============================================================
+function handleKeyDown(e) {
+if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+const btn = document.getElementById('checkBtn');
+if (btn && !btn.disabled) btn.click();
+}
+return;
+}
+if (!state.answered && !state.reviewMode && state.questions.length > 0) {
+const options = document.querySelectorAll('.option:not(.disabled)');
+if (options.length > 0) {
+if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+e.preventDefault();
+state.highlightedOption = (state.highlightedOption + 1) % options.length;
+highlightOption(options, state.highlightedOption);
+} else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+e.preventDefault();
+state.highlightedOption = (state.highlightedOption - 1 + options.length) % options.length;
+highlightOption(options, state.highlightedOption);
+}
+}
+}
+if (!state.answered && !state.reviewMode && state.questions.length > 0) {
+const num = parseInt(e.key);
+if (num >= 1 && num <= 9) {
+const options = document.querySelectorAll('.option:not(.disabled)');
+if (options.length >= num) { 
+options[num - 1].click(); 
+state.highlightedOption = num - 1; 
+}
+}
+}
+if (e.key === 'Enter' && state.questions.length > 0) {
+const nextBtn = document.getElementById('nextBtn');
+if (nextBtn && !nextBtn.classList.contains('hidden')) { 
+nextBtn.click(); 
+return; 
+}
+const checkBtn = document.getElementById('checkBtn');
+if (checkBtn && !checkBtn.disabled) checkBtn.click();
+}
+if (e.key === 'Escape') renderHome();
+if (state.reviewMode) {
+if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { 
+e.preventDefault(); 
+reviewNext(); 
+} else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { 
+e.preventDefault(); 
+reviewPrev(); 
+}
+}
+}
+
+function highlightOption(options, index) {
+options.forEach((el, i) => { 
+el.classList.toggle('highlighted', i === index); 
+});
+if (options[index]) options[index].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+// ============================================================
+// ГЛАВНЫЙ ЭКРАН
+// ============================================================
+function renderHome() {
+state.reviewMode = false;
+state.highlightedOption = -1;
+state.profile = getOrCreateProfile(state.username);
+updateLeaderboard(state.username);
+const board = getLeaderboard();
+const app = document.getElementById('app');
+const color = getAvatarColor(state.username);
+
+let html = `
+<div class="topbar">
+<div class="logo">
+<span class="icon">📚</span>
+Тесты логопеда
+<span class="badge">v2.0</span>
+</div>
+<div class="right">
+<div class="user">
+<div class="avatar" style="background:${color}">${getAvatarLetter(state.username)}</div>
+<span>${state.username}</span>
+</div>
+<button class="btn-icon" onclick="changeName()" title="Сменить имя">✏️</button>
+</div>
+</div>
+`;
+
+if (state.profile) {
+const p = state.profile;
+const avg = p.totalQuestions > 0 ? Math.round((p.totalCorrect / p.totalQuestions) * 100) : 0;
+html += `
+<div class="profile-card">
+<div class="avatar-big" style="background:${color}">${getAvatarLetter(state.username)}</div>
+<div class="info">
+<div class="name">${state.username}</div>
+<div class="stats">
+<span>🎮 <span class="num">${p.gamesPlayed}</span> игр</span>
+<span>✅ <span class="num">${p.totalCorrect}</span>/<span class="num">${p.totalQuestions}</span></span>
+<span>🏆 <span class="num">${p.bestScore}</span> макс</span>
+<span>📊 <span class="num">${avg}%</span></span>
+</div>
+</div>
+</div>
+`;
+}
+
+html += `
+<div class="mode-select">
+<div class="mode-card ${state.mode === 'classic' ? 'active' : ''}" onclick="selectMode('classic')">
+<div class="icon">📝</div>
+<div class="label">Классический</div>
+<div class="desc">20 случайных вопросов</div>
+</div>
+<div class="mode-card ${state.mode === 'marathon' ? 'active' : ''}" onclick="selectMode('marathon')">
+<div class="icon">🏃</div>
+<div class="label">Марафон</div>
+<div class="desc">Все ${ALL_QUESTIONS.length} вопросов</div>
+</div>
+<div class="mode-card ${state.mode === 'blocks' ? 'active' : ''}" onclick="selectMode('blocks')">
+<div class="icon">📚</div>
+<div class="label">По блокам</div>
+<div class="desc">Выбрать раздел</div>
+</div>
+</div>
+`;
+
+if (state.mode === 'blocks') {
+html += `<div class="block-select">`;
+BLOCKS.forEach(block => {
+const count = getQuestionsByBlock(block.name).length;
+if (count === 0) return;
+const isActive = state.selectedBlock === block.name;
+html += `
+<div class="block-card ${isActive ? 'active' : ''}" onclick="selectBlock('${block.name}')">
+<div class="block-icon">${block.icon}</div>
+<div class="block-info">
+<div class="block-name">${block.name}</div>
+<div class="block-count">${count} вопросов</div>
+</div>
+<div class="block-arrow">›</div>
+</div>
+`;
+});
+html += `</div>`;
+if (state.selectedBlock) {
+html += `<button class="btn btn-primary" onclick="startBlockGame()">🚀 Начать тест по блоку</button>`;
+}
+} else {
+html += `<button class="btn btn-primary" onclick="startGame()">🚀 Начать тест</button>`;
+}
+
+html += `
+<div class="leaderboard">
+<div class="title">🏆 Таблица лидеров</div>
+`;
+
+if (board.length === 0) {
+html += `<div style="text-align:center;color:#888;padding:20px;">Пока нет результатов</div>`;
+} else {
+board.slice(0, 10).forEach((entry, index) => {
+const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
+const isMe = entry.name === state.username;
+const entryColor = getAvatarColor(entry.name);
+html += `
+<div class="entry ${isMe ? 'me' : ''}">
+<div class="rank ${index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''}">${medal}</div>
+<div class="avatar-small" style="background:${entryColor}">${getAvatarLetter(entry.name)}</div>
+<div class="info">
+<div class="name">${entry.name}</div>
+<div class="details">
+<span>🎮 ${entry.gamesPlayed} игр</span>
+<span>✅ ${entry.totalCorrect}/${entry.totalQuestions}</span>
+<span>🏆 ${entry.bestScore}</span>
+<span>📊 ${entry.avgPercent}%</span>
+</div>
+</div>
+<div class="result-badge">
+${entry.bestScore}
+<span class="small">лучший</span>
+</div>
+</div>
+`;
+});
+}
+
+html += `</div>`;
+app.innerHTML = html;
+}
+
+function changeName() {
+const newName = prompt('Введите ваше имя:', state.username);
+if (newName && newName.trim()) {
+state.username = newName.trim();
+state.profile = getOrCreateProfile(state.username);
+updateLeaderboard(state.username);
+renderHome();
+}
+}
+
+function selectMode(mode) { 
+state.mode = mode; 
+state.selectedBlock = null; 
+renderHome(); 
+}
+
+function selectBlock(blockName) { 
+state.selectedBlock = blockName; 
+renderHome(); 
+}
+
+function startGame() {
+if (state.mode === 'marathon') state.questions = shuffle([...ALL_QUESTIONS]);
+else state.questions = getRandomQuestions(20);
+state.totalQuestions = state.questions.length;
+resetGameState();
+renderQuestion();
+}
+
+function startBlockGame() {
+if (!state.selectedBlock) return;
+state.questions = shuffle(getQuestionsByBlock(state.selectedBlock));
+state.totalQuestions = state.questions.length;
+resetGameState();
+renderQuestion();
+}
+
+function resetGameState() {
+state.questionStatus = new Array(state.questions.length).fill('unanswered');
+state.userAnswers = {};
+state.currentIndex = 0;
+state.score = 0;
+state.streak = 0;
+state.maxStreak = 0;
+state.marathonScore = 0;
+state.marathonCorrect = 0;
+state.marathonAnswered = 0;
+state.isFinished = false;
+state.answered = false;
+state.history = [];
+state.reviewMode = false;
+state.highlightedOption = -1;
+}
+
+// ============================================================
+// ОТОБРАЖЕНИЕ ВОПРОСА
+// ============================================================
+function renderQuestion() {
+if (state.isFinished || state.currentIndex >= state.questions.length) { 
+renderResult(); 
+return; 
+}
+
+const q = state.questions[state.currentIndex];
+state.answered = false;
+state.selectedAnswers = [];
+state.highlightedOption = -1;
+
+const app = document.getElementById('app');
+const isMarathon = state.mode === 'marathon';
+const isBlocks = state.mode === 'blocks';
+const total = state.questions.length;
+const progress = ((state.currentIndex + 1) / total * 100);
+const correctCount = state.questionStatus.filter(s => s === 'correct').length;
+const wrongCount = state.questionStatus.filter(s => s === 'wrong').length;
+const color = getAvatarColor(state.username);
+const remaining = total - state.currentIndex;
+
+let title = '📚 Тесты';
+if (isMarathon) title = '🏃 Марафон';
+if (isBlocks) title = '📚 ' + state.selectedBlock;
+
+let html = `
+<div class="topbar">
+<div class="logo">
+<span class="icon">${isMarathon ? '🏃' : isBlocks ? '📚' : '📝'}</span>
+${title}
+<span class="badge">${state.username}</span>
+${isMarathon ? `<span class="badge" style="background:#2e7d32;color:white;">Осталось ${remaining}</span>` : ''}
+</div>
+<div class="right">
+<div class="user">
+<div class="avatar" style="background:${color}">${getAvatarLetter(state.username)}</div>
+</div>
+<button class="btn-icon" onclick="renderHome()" title="Главная (Esc)">🏠</button>
+</div>
+</div>
+`;
+
+if (isMarathon) {
+html += `
+<div class="marathon-status">
+<div>
+<div class="score-display"><span class="star">⭐</span> ${state.marathonScore}</div>
+<div class="progress-text">очков</div>
+</div>
+<div>
+<div class="streak-display">✅ ${state.marathonCorrect}/${state.marathonAnswered || 1}</div>
+<div class="progress-text">правильных</div>
+</div>
+<div>
+<div class="streak-display">🔥 ${state.streak} <span class="fire">🔥</span></div>
+<div class="progress-text">рекорд: ${state.maxStreak}</div>
+</div>
+<button class="take-btn" onclick="takeMarathonScore()">💰 Забрать</button>
+</div>
+`;
+} else {
+html += `
+<div class="progress-section">
+<div class="progress-info">
+<span>Вопрос <strong>${state.currentIndex + 1}</strong> из ${total}</span>
+<span><span class="done">✅ ${correctCount}</span> <span class="remaining">❌ ${wrongCount}</span></span>
+</div>
+<div class="progress-bar">
+<div class="fill" style="width: ${progress}%;"></div>
+</div>
+</div>
+`;
+}
+
+html += `<div class="question-nav">`;
+const showCount = Math.min(total, 30);
+const startIdx = Math.max(0, Math.min(state.currentIndex - 8, total - showCount));
+const endIdx = Math.min(total, startIdx + showCount);
+for (let i = startIdx; i < endIdx; i++) {
+const status = state.questionStatus[i] || 'unanswered';
+let cls = 'unanswered';
+let icon = '';
+if (status === 'correct') { cls = 'answered-correct'; icon = '✅'; }
+else if (status === 'wrong') { cls = 'answered-wrong'; icon = '❌'; }
+const isCurrent = i === state.currentIndex;
+html += `
+<button class="q-btn ${cls} ${isCurrent ? 'current' : ''}" onclick="goToQuestion(${i})" title="Вопрос ${i+1}">
+${i + 1}
+${icon ? `<span class="status-icon">${icon}</span>` : ''}
+</button>
+`;
+}
+html += `</div>`;
+
+html += `
+<div class="card fade-in">
+<div class="question-header">
+<span class="num">${q.section ? q.section + ' — ' : ''}Вопрос ${state.currentIndex + 1}</span>
+<span class="type-tag">${getTypeIcon(q.type)} ${getTypeLabel(q.type)}</span>
+</div>
+<div class="question-text">${q.question}</div>
+<div class="options-grid">
+`;
+
+if (q.type === 'single' || q.type === 'multi') {
+const isMulti = q.type === 'multi';
+q.options.forEach((opt, idx) => {
+const num = idx + 1;
+html += `
+<div class="option" data-index="${idx}" onclick="${isMulti ? `selectMulti(${idx})` : `selectSingle(${idx})`}">
+<span class="letter">${letters[idx]}</span>
+<span class="text">${opt}</span>
+<span class="shortcut">${num}</span>
+</div>
+`;
+});
+if (isMulti) {
+html += `<div style="font-size:12px;color:#888;margin-top:4px;">💡 Выберите несколько вариантов</div>`;
+}
+} else if (q.type === 'fill') {
+html += `
+<input type="text" class="fill-input" id="fillInput" placeholder="✏️ Введите ответ..." oninput="onFillInput()">
+<div style="font-size:12px;color:#888;margin-top:4px;">💡 Введите пропущенное слово</div>
+`;
+}
+
+html += `
+</div>
+<button class="btn btn-primary" id="checkBtn" onclick="checkAnswer()" disabled>
+✅ Проверить <span class="shortcut-hint">⏎</span>
+</button>
+<button class="btn btn-success hidden" id="nextBtn" onclick="nextQuestion()">
+${isMarathon ? '➡️ Следующий' : (state.currentIndex < state.questions.length - 1 ? '➡️ Следующий вопрос' : '🎉 Посмотреть результат')}
+<span class="shortcut-hint">⏎</span>
+</button>
+${isMarathon ? `<button class="btn btn-outline" onclick="takeMarathonScore()" style="margin-top:6px;">💰 Забрать очки и выйти</button>` : ''}
+</div>
+`;
+
+app.innerHTML = html;
+
+if (state.userAnswers[state.currentIndex] && state.questionStatus[state.currentIndex] !== 'unanswered') {
+const saved = state.userAnswers[state.currentIndex];
+const options = document.querySelectorAll('.option');
+options.forEach((el, i) => { 
+if (saved.includes(i)) el.classList.add('selected'); 
+});
+state.selectedAnswers = saved;
+document.getElementById('checkBtn').disabled = false;
+}
+
+if (q.type === 'fill') {
+const input = document.getElementById('fillInput');
+if (input) {
+input.addEventListener('input', () => {
+document.getElementById('checkBtn').disabled = input.value.trim() === '';
+});
+setTimeout(() => input.focus(), 100);
+}
+}
+window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goToQuestion(index) {
+if (index >= 0 && index < state.questions.length) { 
+state.currentIndex = index; 
+renderQuestion(); 
+}
+}
+
+function selectSingle(index) {
+if (state.answered) return;
+document.querySelectorAll('.option').forEach((el, i) => { 
+el.classList.toggle('selected', i === index); 
+});
+state.selectedAnswers = [index];
+document.getElementById('checkBtn').disabled = false;
+state.highlightedOption = index;
+}
+
+function selectMulti(index) {
+if (state.answered) return;
+const el = document.querySelector(`.option[data-index="${index}"]`);
+if (el.classList.contains('selected')) {
+el.classList.remove('selected');
+state.selectedAnswers = state.selectedAnswers.filter(i => i !== index);
+} else {
+el.classList.add('selected');
+state.selectedAnswers.push(index);
+}
+document.getElementById('checkBtn').disabled = state.selectedAnswers.length === 0;
+state.highlightedOption = index;
+}
+
+function onFillInput() {
+const input = document.getElementById('fillInput');
+if (input) document.getElementById('checkBtn').disabled = input.value.trim() === '';
+}
+
+// ============================================================
+// ПРОВЕРКА ОТВЕТА
+// ============================================================
+function checkAnswer() {
+if (state.answered) return;
+const q = state.questions[state.currentIndex];
+let correct = false;
+let userAnswer = '';
+
+if (q.type === 'single') {
+userAnswer = q.options[state.selectedAnswers[0]] || '';
+correct = state.selectedAnswers[0] === q.correct;
+document.querySelectorAll('.option').forEach((el, i) => {
+el.classList.add('disabled');
+if (i === q.correct) el.classList.add('correct');
+if (i === state.selectedAnswers[0] && i !== q.correct) el.classList.add('wrong');
+});
+} else if (q.type === 'multi') {
+const correctAnswers = q.correct;
+userAnswer = state.selectedAnswers.map(i => q.options[i]).join(', ');
+document.querySelectorAll('.option').forEach((el, i) => {
+el.classList.add('disabled');
+if (correctAnswers.includes(i)) el.classList.add('correct');
+if (state.selectedAnswers.includes(i) && !correctAnswers.includes(i)) el.classList.add('wrong');
+});
+correct = state.selectedAnswers.slice().sort().join(',') === correctAnswers.slice().sort().join(',');
+} else if (q.type === 'fill') {
+const input = document.getElementById('fillInput');
+userAnswer = input.value.trim();
+const correctAnswer = q.correct;
+correct = userAnswer.toLowerCase() === correctAnswer.toLowerCase() || 
+userAnswer.toLowerCase().includes(correctAnswer.toLowerCase()) || 
+correctAnswer.toLowerCase().includes(userAnswer.toLowerCase());
+input.classList.add(correct ? 'correct' : 'wrong');
+input.disabled = true;
+const explanation = document.createElement('div');
+explanation.className = 'explanation';
+explanation.innerHTML = `✅ Правильный ответ: <strong>${q.correct}</strong>`;
+input.parentNode.insertBefore(explanation, input.nextSibling);
+}
+
+state.history.push({ 
+question: q, 
+userAnswer, 
+selectedIndexes: [...state.selectedAnswers], 
+correct, 
+userAnswerText: userAnswer 
+});
+
+state.questionStatus[state.currentIndex] = correct ? 'correct' : 'wrong';
+state.userAnswers[state.currentIndex] = [...state.selectedAnswers];
+state.answered = true;
+
+if (state.mode === 'marathon') {
+state.marathonAnswered++;
+if (correct) {
+state.marathonCorrect++;
+state.marathonScore += 10 + state.streak * 2;
+state.streak++;
+if (state.streak > state.maxStreak) state.maxStreak = state.streak;
+} else state.streak = 0;
+
+const statusDiv = document.querySelector('.marathon-status');
+if (statusDiv) {
+statusDiv.querySelector('.score-display').innerHTML = `<span class="star">⭐</span> ${state.marathonScore}`;
+const correctSpan = statusDiv.querySelectorAll('.streak-display')[0];
+if (correctSpan) correctSpan.innerHTML = `✅ ${state.marathonCorrect}/${state.marathonAnswered}`;
+const streakSpan = statusDiv.querySelectorAll('.streak-display')[1];
+if (streakSpan) streakSpan.innerHTML = `🔥 ${state.streak} <span class="fire">🔥</span>`;
+}
+} else {
+if (correct) state.score++;
+}
+
+document.getElementById('checkBtn').disabled = true;
+document.getElementById('nextBtn').classList.remove('hidden');
+document.getElementById('nextBtn').focus();
+renderQuestionNavOnly();
+}
+
+function renderQuestionNavOnly() {
+const nav = document.querySelector('.question-nav');
+if (!nav) return;
+const total = state.questions.length;
+const showCount = Math.min(total, 30);
+const startIdx = Math.max(0, Math.min(state.currentIndex - 8, total - showCount));
+const endIdx = Math.min(total, startIdx + showCount);
+let html = '';
+for (let i = startIdx; i < endIdx; i++) {
+const status = state.questionStatus[i] || 'unanswered';
+let cls = 'unanswered', icon = '';
+if (status === 'correct') { cls = 'answered-correct'; icon = '✅'; }
+else if (status === 'wrong') { cls = 'answered-wrong'; icon = '❌'; }
+html += `
+<button class="q-btn ${cls} ${i === state.currentIndex ? 'current' : ''}" onclick="goToQuestion(${i})">
+${i + 1}${icon ? `<span class="status-icon">${icon}</span>` : ''}
+</button>
+`;
+}
+nav.innerHTML = html;
+}
+
+function nextQuestion() {
+let nextIndex = state.currentIndex + 1;
+if (state.mode !== 'marathon') {
+const unanswered = state.questionStatus.findIndex(s => s === 'unanswered');
+if (unanswered !== -1 && unanswered > state.currentIndex) nextIndex = unanswered;
+}
+if (nextIndex >= state.questions.length) { 
+renderResult(); 
+return; 
+}
+state.currentIndex = nextIndex;
+renderQuestion();
+}
+
+function takeMarathonScore() {
+if (state.marathonScore === 0 && state.currentIndex === 0) {
+if (!confirm('Вы ещё не набрали очков. Уверены?')) return;
+}
+const name = state.username;
+const totalAnswered = state.marathonAnswered || 1;
+state.profile = updateProfile(name, { correct: state.marathonCorrect, total: totalAnswered });
+updateLeaderboard(name);
+alert(`🏆 ${name}, вы набрали ${state.marathonScore} очков!\n✅ Правильных: ${state.marathonCorrect} из ${totalAnswered}\n🔥 Серия: ${state.maxStreak}`);
+state.isFinished = true;
+renderHome();
+}
+
+// ============================================================
+// РЕЗУЛЬТАТ
+// ============================================================
+function renderResult() {
+const app = document.getElementById('app');
+const total = state.questions.length;
+let score = state.mode === 'marathon' ? state.marathonCorrect : state.score;
+const percent = Math.round((score / total) * 100);
+let stars = '', message = '';
+if (percent >= 90) { stars = '🌟🌟🌟'; message = 'Отлично! Вы настоящий эксперт! 🎉'; showConfetti(); }
+else if (percent >= 70) { stars = '🌟🌟'; message = 'Хороший результат! Так держать! 💪'; }
+else if (percent >= 50) { stars = '🌟'; message = 'Неплохо, но есть куда расти! 📚'; }
+else { stars = '📚'; message = 'Нужно ещё немного позаниматься! 💪'; }
+
+const name = state.username;
+state.profile = updateProfile(name, { correct: score, total: total });
+updateLeaderboard(name);
+
+let modeLabel = '';
+if (state.mode === 'marathon') modeLabel = `<span class="badge" style="background:#2e7d32;color:white;">🏃 Марафон</span>`;
+else if (state.mode === 'blocks') modeLabel = `<span class="badge" style="background:#6a1b9a;color:white;">📚 ${state.selectedBlock}</span>`;
+
+app.innerHTML = `
+<div class="topbar">
+<div class="logo">
+<span class="icon">📊</span>
+Результаты
+<span class="badge">${state.username}</span>
+${modeLabel}
+</div>
+<div class="right">
+<button class="btn-icon" onclick="renderHome()" title="Главная">🏠</button>
+</div>
+</div>
+<div class="card fade-in">
+<div class="result-card">
+<div class="score-circle">
+<div class="big">${score}</div>
+<div class="total">из ${total}</div>
+<div class="percent-badge">${percent}%</div>
+</div>
+<div class="stars">${stars}</div>
+<div class="message">${message}</div>
+<div class="stats-grid">
+<div class="item"><div class="num green">${score}</div><div class="label">✅ Верно</div></div>
+<div class="item"><div class="num red">${total - score}</div><div class="label">❌ Неверно</div></div>
+<div class="item"><div class="num gold">${percent}%</div><div class="label">🎯 Процент</div></div>
+</div>
+<div class="btn-group">
+<button class="btn btn-primary" onclick="${state.mode === 'blocks' ? 'startBlockGame()' : 'startGame()'}">🔄 Пройти снова</button>
+<button class="btn btn-review" onclick="renderReview()">📖 Просмотреть вопросы</button>
+<button class="btn btn-gold" onclick="renderHome()">🏆 Таблица лидеров</button>
+</div>
+</div>
+</div>
+`;
+}
+
+// ============================================================
+// ПРОСМОТР
+// ============================================================
+function renderReview() {
+state.reviewMode = true;
+state.reviewIndex = 0;
+renderReviewPage();
+}
+
+function renderReviewPage() {
+const app = document.getElementById('app');
+const total = state.history.length;
+const h = state.history[state.reviewIndex];
+if (!h) { renderHome(); return; }
+const isCorrect = h.correct;
+const statusText = isCorrect ? '✅ Правильно' : '❌ Неправильно';
+const statusClass = isCorrect ? 'correct' : 'wrong';
+const q = h.question;
+
+let html = `
+<div class="topbar">
+<div class="logo"><span class="icon">📖</span> Просмотр <span class="badge">${state.reviewIndex + 1}/${total}</span></div>
+<div class="right"><button class="btn-icon" onclick="renderHome()" title="Главная (Esc)">🏠</button></div>
+</div>
+<div style="text-align:center;margin-bottom:12px;"><span class="tag ${statusClass}">${statusText}</span></div>
+<div class="review-item ${isCorrect ? 'correct-item' : 'wrong-item'}">
+<div class="r-header"><span class="qnum">Вопрос #${state.reviewIndex + 1}</span><span class="qstatus ${statusClass}">${statusText}</span></div>
+<div class="r-question">${q.question}</div>
+<div style="font-size:11px;color:#888;margin:4px 0;">${q.section || ''} · ${getTypeLabel(q.type)}</div>
+`;
+
+if (q.type === 'single' || q.type === 'multi') {
+html += `<div class="r-options">`;
+const correctAnswers = Array.isArray(q.correct) ? q.correct : [q.correct];
+q.options.forEach((opt, idx) => {
+let cls = 'neutral';
+const isUserSelected = h.selectedIndexes.includes(idx);
+const isCorrectAnswer = correctAnswers.includes(idx);
+if (isCorrectAnswer && isUserSelected) cls = 'user-correct';
+else if (isCorrectAnswer) cls = 'correct-answer';
+else if (isUserSelected) cls = 'user-wrong';
+const icon = isCorrectAnswer ? '✅' : (isUserSelected ? '❌' : '');
+html += `<div class="ro ${cls}">${letters[idx]}. ${opt} ${icon}${isUserSelected && !isCorrectAnswer ? ' (ваш ответ)' : ''}${isCorrectAnswer && !isUserSelected ? ' (правильный)' : ''}</div>`;
+});
+html += `</div>`;
+} else if (q.type === 'fill') {
+html += `<div class="r-fill"><div>Ваш ответ: <span class="${isCorrect ? 'correct-ans' : 'wrong-ans'}">${h.userAnswer || '(пусто)'}</span></div><div style="margin-top:4px;">Правильный ответ: <span class="correct-ans">${q.correct}</span></div></div>`;
+}
+
+html += `</div>
+<div class="review-nav">
+<button onclick="reviewPrev()" ${state.reviewIndex === 0 ? 'disabled' : ''}>◀ Назад</button>
+<button onclick="renderHome()">🏠</button>
+<button onclick="reviewNext()" ${state.reviewIndex >= total - 1 ? 'disabled' : ''}>Вперёд ▶</button>
+</div>
+<div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:6px;">
+`;
+const start = Math.max(0, state.reviewIndex - 8);
+const end = Math.min(total, start + 16);
+for (let i = start; i < end; i++) {
+const isActive = i === state.reviewIndex;
+const entry = state.history[i];
+const cls = entry.correct ? '✅' : '❌';
+html += `<button onclick="goToReview(${i})" style="padding:4px 8px;border:none;border-radius:4px;${isActive ? 'background:#3949ab;color:white;' : 'background:#e8eaf6;color:#333;'}font-size:11px;cursor:pointer;min-width:26px;">${i + 1}${cls}</button>`;
+}
+html += `</div>`;
+app.innerHTML = html;
+}
+
+function reviewPrev() {
+if (state.reviewIndex > 0) { 
+state.reviewIndex--; 
+renderReviewPage(); 
+}
+}
+
+function reviewNext() {
+if (state.reviewIndex < state.history.length - 1) { 
+state.reviewIndex++; 
+renderReviewPage(); 
+}
+}
+
+function goToReview(index) {
+if (index >= 0 && index < state.history.length) { 
+state.reviewIndex = index; 
+renderReviewPage(); 
+}
+}
+
+// ============================================================
+// ПОДПИСКА НА КЛАВИАТУРУ
+// ============================================================
+document.addEventListener('keydown', handleKeyDown);
+
+// ============================================================
+// ЗАПУСК
+// ============================================================
+renderHome();
+</script>
 </body>
 </html>
